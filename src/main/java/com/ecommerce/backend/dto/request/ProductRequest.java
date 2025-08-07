@@ -1,7 +1,6 @@
 package com.ecommerce.backend.dto.request;
 
 import com.ecommerce.backend.dto.CategoryDto;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.math.BigDecimal;
 

@@ -1,6 +1,5 @@
 package com.ecommerce.backend.dto;
 
-import com.ecommerce.backend.entity.Product;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

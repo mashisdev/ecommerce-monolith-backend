@@ -1,8 +1,8 @@
 package com.ecommerce.backend.service.impl;
 
-import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.dto.UserDto;
 import com.ecommerce.backend.entity.user.User;
+import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.mapper.UserMapper;
 import com.ecommerce.backend.repository.user.UserRepository;
 import com.ecommerce.backend.service.UserService;
@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

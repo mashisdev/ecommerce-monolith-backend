@@ -1,12 +1,12 @@
 package com.ecommerce.backend.controller.impl;
 
 import com.ecommerce.backend.controller.AuthenticationController;
-import com.ecommerce.backend.dto.request.user.*;
-import com.ecommerce.backend.service.AuthenticationService;
-import com.ecommerce.backend.dto.response.AuthenticationResponse;
 import com.ecommerce.backend.dto.UserDto;
+import com.ecommerce.backend.dto.request.user.*;
+import com.ecommerce.backend.dto.response.AuthenticationResponse;
 import com.ecommerce.backend.entity.user.User;
 import com.ecommerce.backend.mapper.UserMapper;
+import com.ecommerce.backend.service.AuthenticationService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.ecommerce.backend.controller;
 
-import com.ecommerce.backend.exception.ErrorMessage;
 import com.ecommerce.backend.dto.UserDto;
 import com.ecommerce.backend.dto.request.user.UpdateUserRequest;
+import com.ecommerce.backend.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "User Management", description = "APIs for reading, updating and deleting users")

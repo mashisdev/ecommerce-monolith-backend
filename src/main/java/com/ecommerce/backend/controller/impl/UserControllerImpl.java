@@ -1,11 +1,11 @@
 package com.ecommerce.backend.controller.impl;
 
 import com.ecommerce.backend.controller.UserController;
-import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
 import com.ecommerce.backend.dto.UserDto;
-import com.ecommerce.backend.entity.user.Role;
-import com.ecommerce.backend.mapper.UserMapper;
 import com.ecommerce.backend.dto.request.user.UpdateUserRequest;
+import com.ecommerce.backend.entity.user.Role;
+import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
+import com.ecommerce.backend.mapper.UserMapper;
 import com.ecommerce.backend.service.UserService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
@@ -19,7 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController

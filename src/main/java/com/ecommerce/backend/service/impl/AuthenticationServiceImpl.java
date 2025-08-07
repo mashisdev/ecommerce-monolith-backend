@@ -1,18 +1,18 @@
 package com.ecommerce.backend.service.impl;
 
+import com.ecommerce.backend.config.service.EmailService;
+import com.ecommerce.backend.config.service.JwtService;
+import com.ecommerce.backend.dto.UserDto;
 import com.ecommerce.backend.dto.request.user.AuthenticationRequest;
 import com.ecommerce.backend.dto.request.user.VerifyRequest;
 import com.ecommerce.backend.dto.response.AuthenticationResponse;
-import com.ecommerce.backend.config.service.EmailService;
-import com.ecommerce.backend.config.service.JwtService;
+import com.ecommerce.backend.entity.user.Role;
+import com.ecommerce.backend.entity.user.User;
+import com.ecommerce.backend.entity.user.UserEntity;
 import com.ecommerce.backend.exception.user.UserAlreadyRegisteredException;
 import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.exception.user.WrongEmailOrPasswordException;
 import com.ecommerce.backend.exception.validation.*;
-import com.ecommerce.backend.dto.UserDto;
-import com.ecommerce.backend.entity.user.Role;
-import com.ecommerce.backend.entity.user.User;
-import com.ecommerce.backend.entity.user.UserEntity;
 import com.ecommerce.backend.mapper.UserMapper;
 import com.ecommerce.backend.repository.user.UserRepository;
 import com.ecommerce.backend.service.AuthenticationService;
