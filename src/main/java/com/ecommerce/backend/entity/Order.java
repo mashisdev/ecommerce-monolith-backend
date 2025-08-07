@@ -1,6 +1,7 @@
 package com.ecommerce.backend.entity;
 
 import com.ecommerce.backend.entity.user.User;
+import com.ecommerce.backend.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,5 +47,5 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 }

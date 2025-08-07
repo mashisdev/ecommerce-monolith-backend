@@ -1,6 +1,7 @@
 package com.ecommerce.backend.entity;
 
 import com.ecommerce.backend.entity.user.User;
+import com.ecommerce.backend.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,5 +23,5 @@ public class Address {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 }
