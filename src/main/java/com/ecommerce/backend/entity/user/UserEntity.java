@@ -1,5 +1,8 @@
 package com.ecommerce.backend.entity.user;
 
+import com.ecommerce.backend.entity.Address;
+import com.ecommerce.backend.entity.Order;
+import com.ecommerce.backend.entity.OrderItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,9 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Data
@@ -39,6 +40,12 @@ public class UserEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Order> orders = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Address address;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -58,8 +65,8 @@ public class UserEntity implements UserDetails {
     private boolean enabled;
     @Column(name = "verification_code")
     private Integer verificationCode;
-    @Column(name = "verification_expiration")
-    private LocalDateTime verificationCodeExpiresAt;
+    @Column(name = "verification_code_expiration")
+    private LocalDateTime verificationCodeExpiration;
 
     // Password reset
     @Column(name = "password_reset_token")
