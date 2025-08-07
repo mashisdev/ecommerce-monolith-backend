@@ -21,4 +21,6 @@ public class User {
     private Integer verificationCode;
     private String passwordResetToken;
     private Instant passwordResetTokenExpiration;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
 }
