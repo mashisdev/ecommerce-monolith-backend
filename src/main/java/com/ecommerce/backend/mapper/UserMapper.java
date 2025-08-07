@@ -1,6 +1,6 @@
 package com.ecommerce.backend.mapper;
 
-// import com.jwt.roles_email.auth.request.RegisterRequest;
+import com.ecommerce.backend.dto.request.RegisterRequest;
 // import com.jwt.roles_email.user.request.UpdateUserRequest;
 import com.ecommerce.backend.entity.user.User;
 import com.ecommerce.backend.dto.UserDto;
@@ -21,8 +21,8 @@ public interface UserMapper {
 
     User userDtoToUser(UserDto userDTO);
 
-//    // RegisterRequest -> User
-//    User registerRequestToUser(RegisterRequest registerRequest);
+    // RegisterRequest -> User
+    User registerRequestToUser(RegisterRequest registerRequest);
 //
 //    // UpdateUserRequest -> UserDto
 //    UserDto updateUserRequestToUserDto(UpdateUserRequest updateUserRequest);

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<User> findById(UUID id) {
         return userJpaRepository.findById(id).map(userMapper::userEntityToUser);
     }
 
@@ -39,8 +40,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByResetToken(String resetToken) {
-        return userJpaRepository.findByResetToken(resetToken).map(userMapper::userEntityToUser);
+    public Optional<User> findByPasswordResetToken(String passwordResetToken) {
+        return userJpaRepository.findByPasswordResetToken(passwordResetToken).map(userMapper::userEntityToUser);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(UUID id) {
         userJpaRepository.deleteById(id);
     }
 

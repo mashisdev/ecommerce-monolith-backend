@@ -19,6 +19,6 @@ public class User {
     private boolean enabled;
     private LocalDateTime verificationCodeExpiresAt;
     private Integer verificationCode;
-    private String resetToken;
-    private Instant resetTokenExpiration;
+    private String passwordResetToken;
+    private Instant passwordResetTokenExpiration;
 }
