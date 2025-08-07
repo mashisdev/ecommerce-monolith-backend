@@ -1,6 +1,8 @@
 package com.ecommerce.backend.repository.user;
 
 import com.ecommerce.backend.entity.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +18,7 @@ public interface UserRepository {
 
     Optional<User> findByPasswordResetToken(String passwordResetToken);
 
-    List<User> findAll();
+    Page<User> findAll(Pageable pageable);
 
     Boolean existsByEmail(String email);
 

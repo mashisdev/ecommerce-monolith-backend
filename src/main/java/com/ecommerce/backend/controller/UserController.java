@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -107,7 +109,7 @@ public interface UserController {
                             schema = @Schema(implementation = ErrorMessage.class))
             )
     })
-    ResponseEntity<List<UserDto>> findAll();
+    ResponseEntity<Page<UserDto>> findAll(Pageable pageable);
 
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Update user details", description = "Updates the details of a user. The authenticated user can only update their own account.")

@@ -9,6 +9,8 @@ import com.ecommerce.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,12 +54,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAll() {
+    public Page<UserDto> findAll(Pageable pageable) {
         log.info("Attempting to find all user DTOs.");
-        List<UserDto> userDtos = userRepository.findAll().stream()
-                .map(userMapper::userToUserDto)
-                .toList();
-        log.info("Found {} user DTOs.", userDtos.size());
+        Page<UserDto> userDtos = userRepository.findAll(pageable).map(userMapper::userToUserDto);
+        log.info("Found {} user DTOs.", userDtos.getSize());
         return userDtos;
     }
 
