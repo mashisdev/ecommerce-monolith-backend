@@ -1,7 +1,7 @@
 package com.ecommerce.backend.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jwt.roles_email.exception.ErrorMessage;
+import com.ecommerce.backend.exception.ErrorMessage;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

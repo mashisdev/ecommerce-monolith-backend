@@ -5,12 +5,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.UUID;
+
 @Schema(description = "Request body for updating user details")
 public record UpdateUserRequest (
 
         @NotNull(message = "The id cannot be null")
         @Schema(description = "The unique ID of the user to update.", example = "1")
-        Long id,
+        UUID id,
 
         @NotBlank(message = "The firstname is mandatory")
         @Schema(description = "The updated first name of the user.", example = "Jane")

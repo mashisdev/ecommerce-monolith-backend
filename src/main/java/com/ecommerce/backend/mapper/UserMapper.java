@@ -2,6 +2,7 @@ package com.ecommerce.backend.mapper;
 
 import com.ecommerce.backend.dto.UserDto;
 import com.ecommerce.backend.dto.request.user.RegisterRequest;
+import com.ecommerce.backend.dto.request.user.UpdateUserRequest;
 import com.ecommerce.backend.entity.user.User;
 import com.ecommerce.backend.entity.user.UserEntity;
 import org.mapstruct.Mapper;
@@ -22,7 +23,7 @@ public interface UserMapper {
 
     // RegisterRequest -> User
     User registerRequestToUser(RegisterRequest registerRequest);
-//
-//    // UpdateUserRequest -> UserDto
-//    UserDto updateUserRequestToUserDto(UpdateUserRequest updateUserRequest);
+
+    // UpdateUserRequest -> UserDto
+    UserDto updateUserRequestToUserDto(UpdateUserRequest updateUserRequest);
 }

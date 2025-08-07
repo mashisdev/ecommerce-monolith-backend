@@ -1,12 +1,12 @@
 package com.ecommerce.backend.controller.impl;
 
 import com.ecommerce.backend.controller.UserController;
-import com.jwt.roles_email.exception.user.NotAllowedToChangeCredentialsException;
-import com.jwt.roles_email.user.dto.UserDto;
-import com.jwt.roles_email.user.entity.Role;
-import com.jwt.roles_email.user.mapper.UserMapper;
-import com.jwt.roles_email.user.request.UpdateUserRequest;
-import com.jwt.roles_email.user.service.UserService;
+import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
+import com.ecommerce.backend.dto.UserDto;
+import com.ecommerce.backend.entity.user.Role;
+import com.ecommerce.backend.mapper.UserMapper;
+import com.ecommerce.backend.dto.request.user.UpdateUserRequest;
+import com.ecommerce.backend.service.UserService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/users")
@@ -42,7 +43,7 @@ public class UserControllerImpl implements UserController {
     @Override
     @GetMapping("/{id}")
     @RateLimiter(name = "userRateLimiter")
-    public ResponseEntity<UserDto> findById(@PathVariable Long id) {
+    public ResponseEntity<UserDto> findById(@PathVariable UUID id) {
         log.info("Received request to find user by ID: {}", id);
 
         UserDto userDto = userService.findById(id);
@@ -65,7 +66,7 @@ public class UserControllerImpl implements UserController {
     @Override
     @PutMapping("/{id}")
     @RateLimiter(name = "userRateLimiter")
-    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody @Valid UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<UserDto> update(@PathVariable UUID id, @RequestBody @Valid UpdateUserRequest updateUserRequest) {
         String authenticatedUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("Received update request for user ID: {} from authenticated user: {}", id, authenticatedUserEmail);
         UserDto currentUser = userService.findByEmail(authenticatedUserEmail);
@@ -89,7 +90,7 @@ public class UserControllerImpl implements UserController {
     @Override
     @DeleteMapping("/{id}")
     @RateLimiter(name = "userRateLimiter")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         String authenticatedUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("Received delete request for user ID: {} from authenticated user: {}", id, authenticatedUserEmail);
 
