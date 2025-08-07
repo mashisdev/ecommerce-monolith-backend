@@ -2,13 +2,11 @@ package com.ecommerce.backend.entity.user;
 
 import com.ecommerce.backend.entity.Address;
 import com.ecommerce.backend.entity.Order;
-import com.ecommerce.backend.entity.OrderItem;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 

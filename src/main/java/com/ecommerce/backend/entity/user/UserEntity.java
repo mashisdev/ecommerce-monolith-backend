@@ -2,7 +2,6 @@ package com.ecommerce.backend.entity.user;
 
 import com.ecommerce.backend.entity.Address;
 import com.ecommerce.backend.entity.Order;
-import com.ecommerce.backend.entity.OrderItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

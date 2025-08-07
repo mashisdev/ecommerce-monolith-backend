@@ -1,6 +1,5 @@
 package com.ecommerce.backend.entity;
 
-import com.ecommerce.backend.entity.user.User;
 import com.ecommerce.backend.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;

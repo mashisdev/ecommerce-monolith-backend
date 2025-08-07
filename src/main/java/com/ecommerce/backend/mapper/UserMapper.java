@@ -1,9 +1,8 @@
 package com.ecommerce.backend.mapper;
 
-import com.ecommerce.backend.dto.request.RegisterRequest;
-// import com.jwt.roles_email.user.request.UpdateUserRequest;
-import com.ecommerce.backend.entity.user.User;
 import com.ecommerce.backend.dto.UserDto;
+import com.ecommerce.backend.dto.request.user.RegisterRequest;
+import com.ecommerce.backend.entity.user.User;
 import com.ecommerce.backend.entity.user.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

@@ -1,4 +1,4 @@
-package com.ecommerce.backend.dto.request;
+package com.ecommerce.backend.dto.request.user;
 
 public record RegisterRequest (
         String firstname,
