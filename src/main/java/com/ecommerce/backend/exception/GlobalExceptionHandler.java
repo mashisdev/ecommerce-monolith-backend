@@ -1,5 +1,7 @@
 package com.ecommerce.backend.exception;
 
+import com.ecommerce.backend.exception.category.CategoryAlreadyExistsException;
+import com.ecommerce.backend.exception.category.CategoryNotFoundException;
 import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
 import com.ecommerce.backend.exception.user.UserAlreadyRegisteredException;
 import com.ecommerce.backend.exception.user.UserNotFoundException;
@@ -150,6 +152,34 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(error);
     }
+
+    // --- Category Exception Handlers ---
+    // Handles CategoryNotFoundException, returning 404 NOT FOUND
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleCategoryNotFound(CategoryNotFoundException ex, HttpServletRequest request) {
+        log.warn("Category not found: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.NOT_FOUND.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    // Handles CategoryAlreadyExistsException, returning 409 CONFLICT
+    @ExceptionHandler(CategoryAlreadyExistsException.class)
+    public ResponseEntity<ErrorMessage> handleCategoryAlreadyExists(CategoryAlreadyExistsException ex, HttpServletRequest request) {
+        log.warn("Category already exists: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.CONFLICT.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
 
     // Handles HttpRequestMethodNotSupportedException, returning 405 METHOD NOT ALLOWED
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
