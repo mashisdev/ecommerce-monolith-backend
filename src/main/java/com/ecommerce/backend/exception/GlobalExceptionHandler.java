@@ -1,5 +1,6 @@
 package com.ecommerce.backend.exception;
 
+import com.ecommerce.backend.exception.address.AddressNotFoundException;
 import com.ecommerce.backend.exception.category.CategoryAlreadyExistsException;
 import com.ecommerce.backend.exception.category.CategoryNotFoundException;
 import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
@@ -180,6 +181,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    // --- Address Exception Handlers ---
+    // Handles AddressNotFoundException, returning 404 NOT FOUND
+    @ExceptionHandler(AddressNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleAddressNotFound(AddressNotFoundException ex, HttpServletRequest request) {
+        log.warn("Address not found: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.NOT_FOUND.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 
     // Handles HttpRequestMethodNotSupportedException, returning 405 METHOD NOT ALLOWED
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
