@@ -46,7 +46,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @GetMapping("/{orderId}")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN') and (@orderService.isOrderOwner(#orderId, #user.id) or hasAuthority('ADMIN'))")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN') and (@orderServiceImpl.isOrderOwner(#orderId, #user.id) or hasAuthority('ADMIN'))")
     public ResponseEntity<OrderDto> getOrderById(@PathVariable Long orderId, @AuthenticationPrincipal UserEntity user) {
         log.info("Received request to get order with ID: {}", orderId);
         OrderDto order = orderService.getOrderById(orderId);
@@ -78,7 +78,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @PutMapping("/{orderId}/cancel")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN') and (@orderService.isOrderOwner(#orderId, #user.id) or hasAuthority('ADMIN'))")
+    @PreAuthorize("hasAuthority('USER') and @orderServiceImpl.isOrderOwner(#orderId, #user.id)")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelOrder(@PathVariable Long orderId, @AuthenticationPrincipal UserEntity user) {
         log.info("Received request to cancel order with ID: {} from user: {}", orderId, user.getEmail());
