@@ -28,6 +28,7 @@ public class OrderControllerImpl implements OrderController {
     private final OrderService orderService;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody OrderRequest request) {
         log.info("Received request to create a new order for user with ID: {}", request.userId());
         OrderDto newOrder = orderService.createOrder(request);
@@ -45,7 +46,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @GetMapping("/{orderId}")
-    @PreAuthorize("hasAuthority('ADMIN') or @orderService.getOrderById(#orderId).userId == #user.id")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN') and (@orderService.isOrderOwner(#orderId, #user.id) or hasAuthority('ADMIN'))")
     public ResponseEntity<OrderDto> getOrderById(@PathVariable Long orderId, @AuthenticationPrincipal UserEntity user) {
         log.info("Received request to get order with ID: {}", orderId);
         OrderDto order = orderService.getOrderById(orderId);
@@ -54,7 +55,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN') or #userId.equals(#user.id)")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN') and (#userId.equals(#user.id) or hasAuthority('ADMIN'))")
     public ResponseEntity<Page<OrderDto>> getOrdersByUser(
             @PathVariable UUID userId,
             @PageableDefault(size = 10) Pageable pageable,
@@ -67,10 +68,30 @@ public class OrderControllerImpl implements OrderController {
 
     @PutMapping("/{orderId}/status")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateOrderStatus(@PathVariable Long orderId, @RequestParam String newStatus) {
+    public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable Long orderId, @RequestParam String newStatus) {
         log.info("Received request to update status of order with ID: {} to status: {}", orderId, newStatus);
-        orderService.updateOrderStatus(orderId, newStatus);
-        log.info("Order status updated successfully.");
+
+        OrderDto updatedOrder = orderService.updateOrderStatus(orderId, newStatus);
+
+        log.info("Order status updated successfully for order with ID: {}", orderId);
+        return ResponseEntity.ok(updatedOrder);
+    }
+
+    @PutMapping("/{orderId}/cancel")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN') and (@orderService.isOrderOwner(#orderId, #user.id) or hasAuthority('ADMIN'))")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cancelOrder(@PathVariable Long orderId, @AuthenticationPrincipal UserEntity user) {
+        log.info("Received request to cancel order with ID: {} from user: {}", orderId, user.getEmail());
+        orderService.cancelOrder(orderId, user.getId());
+        log.info("Order with ID {} cancelled successfully.", orderId);
+    }
+
+    @DeleteMapping("/{orderId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOrder(@PathVariable Long orderId) {
+        log.info("Received request to permanently delete order with ID: {}", orderId);
+        orderService.deleteOrder(orderId);
+        log.info("Order with ID {} permanently deleted successfully.", orderId);
     }
 }

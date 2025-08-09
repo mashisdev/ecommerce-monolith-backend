@@ -59,7 +59,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         log.debug("Password encoded for user: {}", user.getEmail());
 
-        user.setRole(Role.USER);
+        user.setRole(Role.UNVERIFIED_USER);
         log.debug("Role assigned to user: {}", user.getEmail());
 
         user.setEnabled(false);
@@ -111,6 +111,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         log.debug("Verification code for user {} is still valid.", user.getEmail());
 
+        user.setRole(Role.USER);
         user.setEnabled(true);
         user.setVerificationCode(null);
         user.setVerificationCodeExpiration(null);

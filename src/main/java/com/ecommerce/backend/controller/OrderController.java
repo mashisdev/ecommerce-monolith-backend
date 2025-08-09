@@ -6,8 +6,6 @@ import com.ecommerce.backend.entity.user.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -20,5 +18,8 @@ public interface OrderController {
             UUID userId,
             Pageable pageable,
             UserEntity user);
-    void updateOrderStatus(@PathVariable Long orderId, @RequestParam String newStatus);
+    ResponseEntity<OrderDto> updateOrderStatus(Long orderId,
+                                               String newStatus);
+    void cancelOrder(Long orderId, UserEntity user);
+    void deleteOrder(Long orderId);
 }

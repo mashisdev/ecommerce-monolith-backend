@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void updateOrderStatus(Long orderId, String newStatus) {
+    public OrderDto updateOrderStatus(Long orderId, String newStatus) {
         log.info("Updating status for order with id: {} to {}", orderId, newStatus);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order with id " + orderId + " not found."));
@@ -107,10 +108,48 @@ public class OrderServiceImpl implements OrderService {
         try {
             OrderStatus status = OrderStatus.valueOf(newStatus.toUpperCase());
             order.setStatus(status);
-            orderRepository.save(order);
+            Order updatedOrder = orderRepository.save(order);
             log.info("Order {} status updated successfully.", orderId);
+            return orderMapper.toDto(updatedOrder);
         } catch (IllegalArgumentException e) {
             throw new InvalidOrderStatusException("Invalid status provided: " + newStatus);
         }
+    }
+
+    @Override
+    public boolean isOrderOwner(Long orderId, UUID userId) {
+        return orderRepository.findById(orderId)
+                .map(order -> order.getUser().getId().equals(userId))
+                .orElse(false);
+    }
+
+    @Override
+    @Transactional
+    public void cancelOrder(Long orderId, UUID userId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order with id " + orderId + " not found."));
+
+        if (!order.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("User is not the owner of this order.");
+        }
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new InvalidOrderStatusException("Only orders with PENDING status can be cancelled.");
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+        log.info("Order with ID {} has been successfully cancelled by user {}.", orderId, userId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteOrder(Long orderId) {
+        if (!orderRepository.existsById(orderId)) {
+            throw new OrderNotFoundException("Order with id " + orderId + " not found.");
+        }
+
+        orderRepository.deleteById(orderId);
+        log.info("Order with ID {} has been permanently deleted by an ADMIN.", orderId);
     }
 }

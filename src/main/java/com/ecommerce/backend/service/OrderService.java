@@ -12,5 +12,8 @@ public interface OrderService {
     OrderDto getOrderById(Long orderId);
     Page<OrderDto> getOrdersByUser(UUID userId, Pageable pageable);
     Page<OrderDto> getAllOrders(Pageable pageable);
-    void updateOrderStatus(Long orderId, String newStatus);
+    OrderDto updateOrderStatus(Long orderId, String newStatus);
+    boolean isOrderOwner(Long orderId, UUID userId);
+    void deleteOrder(Long orderId);
+    void cancelOrder(Long orderId, UUID userId);
 }

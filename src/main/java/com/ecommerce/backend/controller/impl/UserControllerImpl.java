@@ -32,7 +32,6 @@ public class UserControllerImpl implements UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    @Override
     @GetMapping("/me")
     @RateLimiter(name = "userRateLimiter")
     public ResponseEntity<UserDto> findMeByEmail(@AuthenticationPrincipal UserEntity user) {
@@ -41,7 +40,6 @@ public class UserControllerImpl implements UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @Override
     @GetMapping("/{id}")
     @RateLimiter(name = "userRateLimiter")
     public ResponseEntity<UserDto> findById(@PathVariable UUID id) {
@@ -52,7 +50,6 @@ public class UserControllerImpl implements UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @Override
     @GetMapping()
     @PreAuthorize("hasAuthority('ADMIN')")
     @RateLimiter(name = "userRateLimiter")
@@ -64,7 +61,6 @@ public class UserControllerImpl implements UserController {
         return ResponseEntity.ok(users);
     }
 
-    @Override
     @PutMapping("/{id}")
     @RateLimiter(name = "userRateLimiter")
     public ResponseEntity<UserDto> update(@PathVariable UUID id, @RequestBody @Valid UpdateUserRequest updateUserRequest) {
@@ -88,7 +84,6 @@ public class UserControllerImpl implements UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-    @Override
     @DeleteMapping("/{id}")
     @RateLimiter(name = "userRateLimiter")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
