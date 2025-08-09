@@ -3,6 +3,7 @@ package com.ecommerce.backend.exception;
 import com.ecommerce.backend.exception.address.AddressNotFoundException;
 import com.ecommerce.backend.exception.category.CategoryAlreadyExistsException;
 import com.ecommerce.backend.exception.category.CategoryNotFoundException;
+import com.ecommerce.backend.exception.product.ProductNotFoundException;
 import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
 import com.ecommerce.backend.exception.user.UserAlreadyRegisteredException;
 import com.ecommerce.backend.exception.user.UserNotFoundException;
@@ -186,6 +187,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AddressNotFoundException.class)
     public ResponseEntity<ErrorMessage> handleAddressNotFound(AddressNotFoundException ex, HttpServletRequest request) {
         log.warn("Address not found: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.NOT_FOUND.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    // --- Product Exception Handlers ---
+    // Handles ProductNotFoundException, returning 404 NOT FOUND
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleProductNotFound(ProductNotFoundException ex, HttpServletRequest request) {
+        log.warn("Product not found: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
         ErrorMessage error = new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
                 ex,

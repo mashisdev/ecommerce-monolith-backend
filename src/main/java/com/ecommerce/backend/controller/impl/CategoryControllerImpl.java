@@ -26,7 +26,6 @@ public class CategoryControllerImpl implements CategoryController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RateLimiter(name = "categoryRateLimiter")
     public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryRequest request) {
         log.info("Received request to create a new category with name: {}", request.name());
         CategoryDto newCategory = categoryService.createCategory(request.name());
@@ -35,7 +34,6 @@ public class CategoryControllerImpl implements CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    @RateLimiter(name = "categoryRateLimiter")
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long categoryId) {
         log.info("Received request to get category with ID: {}", categoryId);
         CategoryDto category = categoryService.getCategoryById(categoryId);
@@ -44,7 +42,6 @@ public class CategoryControllerImpl implements CategoryController {
     }
 
     @GetMapping
-    @RateLimiter(name = "categoryRateLimiter")
     public ResponseEntity<Page<CategoryDto>> getAllCategories(@PageableDefault(size = 10) Pageable pageable) {
         log.info("Received request to get all categories. Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<CategoryDto> categories = categoryService.getAllCategories(pageable);
@@ -54,7 +51,6 @@ public class CategoryControllerImpl implements CategoryController {
 
     @PutMapping("/{categoryId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RateLimiter(name = "categoryRateLimiter")
     public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long categoryId, @Valid @RequestBody CategoryRequest request) {
         log.info("Received request to update category with ID: {}. New name: {}", categoryId, request.name());
         CategoryDto updatedCategory = categoryService.updateCategory(categoryId, request.name());
@@ -64,7 +60,6 @@ public class CategoryControllerImpl implements CategoryController {
 
     @DeleteMapping("/{categoryId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RateLimiter(name = "categoryRateLimiter")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long categoryId) {
         log.info("Received request to delete category with ID: {}", categoryId);
         categoryService.deleteCategory(categoryId);

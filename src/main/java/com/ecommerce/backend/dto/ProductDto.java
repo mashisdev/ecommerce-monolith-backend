@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -19,6 +20,7 @@ public class ProductDto {
     private boolean active;
     private String imageUrl;
     private BigDecimal unitPrice;
-    @JsonManagedReference
-    private CategoryDto category;
+    private Long categoryId;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
 }
