@@ -1,5 +1,6 @@
 package com.ecommerce.backend.entity;
 
+import com.ecommerce.backend.entity.order.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +27,9 @@ public class OrderItem {
     @Column(name="quantity")
     private int quantity;
 
-    @Column(name="product_id")
-    private Long productsId;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @ManyToOne
     @JoinColumn(name="order_id")

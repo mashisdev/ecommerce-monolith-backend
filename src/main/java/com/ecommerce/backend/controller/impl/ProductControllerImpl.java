@@ -26,7 +26,6 @@ public class ProductControllerImpl implements ProductController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RateLimiter(name = "productRateLimiter")
     public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductRequest request) {
         log.info("Received request to create a new product.");
         ProductDto newProduct = productService.createProduct(request);
@@ -35,7 +34,6 @@ public class ProductControllerImpl implements ProductController {
     }
 
     @GetMapping("/{productId}")
-    @RateLimiter(name = "productRateLimiter")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
         log.info("Received request to get product with ID: {}", productId);
         ProductDto product = productService.getProductById(productId);
@@ -44,7 +42,6 @@ public class ProductControllerImpl implements ProductController {
     }
 
     @GetMapping
-    @RateLimiter(name = "productRateLimiter")
     public ResponseEntity<Page<ProductDto>> getAllProducts(@PageableDefault(size = 10) Pageable pageable) {
         log.info("Received request to get all products. Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<ProductDto> products = productService.getAllProducts(pageable);
@@ -53,7 +50,6 @@ public class ProductControllerImpl implements ProductController {
     }
 
     @GetMapping("/category/{categoryId}")
-    @RateLimiter(name = "productRateLimiter")
     public ResponseEntity<Page<ProductDto>> getProductsByCategory(
             @PathVariable Long categoryId,
             @PageableDefault(size = 10) Pageable pageable) {
@@ -65,7 +61,6 @@ public class ProductControllerImpl implements ProductController {
 
     @PutMapping("/{productId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RateLimiter(name = "productRateLimiter")
     public ResponseEntity<ProductDto> updateProduct(
             @PathVariable Long productId,
             @Valid @RequestBody ProductRequest request) {
@@ -77,7 +72,6 @@ public class ProductControllerImpl implements ProductController {
 
     @DeleteMapping("/{productId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RateLimiter(name = "productRateLimiter")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         log.info("Received request to delete product with ID: {}", productId);
         productService.deleteProduct(productId);
@@ -100,7 +94,6 @@ public class ProductControllerImpl implements ProductController {
     }
 
     @GetMapping("/search")
-    @RateLimiter(name = "productRateLimiter")
     public ResponseEntity<ProductDto> searchProduct(@RequestParam String searchValue) {
         log.info("Received request to search for product with value: {}", searchValue);
         ProductDto product = productService.searchProduct(searchValue);

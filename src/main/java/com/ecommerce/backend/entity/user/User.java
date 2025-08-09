@@ -1,7 +1,7 @@
 package com.ecommerce.backend.entity.user;
 
 import com.ecommerce.backend.entity.Address;
-import com.ecommerce.backend.entity.Order;
+import com.ecommerce.backend.entity.order.Order;
 import lombok.Builder;
 import lombok.Data;
 

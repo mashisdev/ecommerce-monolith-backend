@@ -1,5 +1,6 @@
-package com.ecommerce.backend.entity;
+package com.ecommerce.backend.entity.order;
 
+import com.ecommerce.backend.entity.OrderItem;
 import com.ecommerce.backend.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,7 +33,8 @@ public class Order {
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @CreatedDate
     @Column(name = "created_date")
@@ -47,4 +49,14 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    public void add(OrderItem item) {
+        if (item != null) {
+            if (orderItems == null) {
+                orderItems = new HashSet<>();
+            }
+            orderItems.add(item);
+            item.setOrder(this);
+        }
+    }
 }

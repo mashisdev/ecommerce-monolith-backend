@@ -22,7 +22,6 @@ public class AddressControllerImpl implements AddressController {
     private final AddressService addressService;
 
     @PostMapping
-    @RateLimiter(name = "addressRateLimiter")
     public ResponseEntity<AddressDto> createAddress(@Valid @RequestBody CreateAddressRequest request) {
         log.info("Received request to create address for user with id: {}", request.userId());
         AddressDto newAddress = addressService.createAddress(request);
@@ -31,7 +30,6 @@ public class AddressControllerImpl implements AddressController {
     }
 
     @PutMapping("/{id}")
-    @RateLimiter(name = "addressRateLimiter")
     public ResponseEntity<AddressDto> updateAddress(@PathVariable Long id, @Valid @RequestBody UpdateAddressRequest request) {
         log.info("Received request to update address with id: {}", id);
         AddressDto updatedAddress = addressService.updateAddress(id, request);

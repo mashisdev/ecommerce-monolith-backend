@@ -11,6 +11,7 @@ import com.ecommerce.backend.mapper.AddressMapper;
 import com.ecommerce.backend.mapper.UserMapper;
 import com.ecommerce.backend.repository.AddressRepository;
 import com.ecommerce.backend.repository.user.UserRepository;
+import com.ecommerce.backend.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AddressServiceImpl {
+public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;

@@ -3,6 +3,8 @@ package com.ecommerce.backend.exception;
 import com.ecommerce.backend.exception.address.AddressNotFoundException;
 import com.ecommerce.backend.exception.category.CategoryAlreadyExistsException;
 import com.ecommerce.backend.exception.category.CategoryNotFoundException;
+import com.ecommerce.backend.exception.orders.InvalidOrderStatusException;
+import com.ecommerce.backend.exception.orders.OrderNotFoundException;
 import com.ecommerce.backend.exception.product.ProductNotFoundException;
 import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
 import com.ecommerce.backend.exception.user.UserAlreadyRegisteredException;
@@ -208,6 +210,30 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    // --- Orders Exception Handlers ---
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleOrderNotFound(OrderNotFoundException ex, HttpServletRequest request) {
+        log.warn("Order not found: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.NOT_FOUND.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+    @ExceptionHandler(InvalidOrderStatusException.class)
+    public ResponseEntity<ErrorMessage> handleInvalidOrderStatus(InvalidOrderStatusException ex, HttpServletRequest request) {
+        log.warn("Invalid order status: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     // Handles HttpRequestMethodNotSupportedException, returning 405 METHOD NOT ALLOWED

@@ -27,3 +27,25 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: 'true'
+
+logging:
+  level:
+    com.ecommerce.backend: DEBUG
+
+resilience4j.ratelimiter:
+  instances:
+    apiRateLimiter:
+      limitForPeriod: 5
+      limitRefreshPeriod: 1s
+      timeoutDuration: 0s
+      registerHealthIndicator: true
+    authRateLimiter:
+      limitForPeriod: 1
+      limitRefreshPeriod: 1s
+      timeoutDuration: 0s
+      registerHealthIndicator: true
+    userRateLimiter:
+      limitForPeriod: 2
+      limitRefreshPeriod: 1s
+      timeoutDuration: 0s
+      registerHealthIndicator: true
