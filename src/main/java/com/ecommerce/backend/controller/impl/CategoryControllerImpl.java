@@ -4,7 +4,6 @@ import com.ecommerce.backend.controller.CategoryController;
 import com.ecommerce.backend.dto.CategoryDto;
 import com.ecommerce.backend.dto.request.CategoryRequest;
 import com.ecommerce.backend.service.CategoryService;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

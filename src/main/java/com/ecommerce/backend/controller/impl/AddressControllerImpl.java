@@ -5,13 +5,12 @@ import com.ecommerce.backend.dto.AddressDto;
 import com.ecommerce.backend.dto.request.CreateAddressRequest;
 import com.ecommerce.backend.dto.request.UpdateAddressRequest;
 import com.ecommerce.backend.service.AddressService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import jakarta.validation.Valid;
 
 @Slf4j
 @RestController

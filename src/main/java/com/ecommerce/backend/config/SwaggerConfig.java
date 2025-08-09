@@ -12,8 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "Roles Email Project API",
-                description = "This API provides authentication for users, including email verification and password reset functionalities.",
+                title = "E-commerce Project Backend API",
                 version = "1.0.0",
                 contact = @Contact(
                         name = "mashisdev",

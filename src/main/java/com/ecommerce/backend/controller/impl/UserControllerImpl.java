@@ -4,6 +4,7 @@ import com.ecommerce.backend.controller.UserController;
 import com.ecommerce.backend.dto.UserDto;
 import com.ecommerce.backend.dto.request.user.UpdateUserRequest;
 import com.ecommerce.backend.entity.user.Role;
+import com.ecommerce.backend.entity.user.UserEntity;
 import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
 import com.ecommerce.backend.mapper.UserMapper;
 import com.ecommerce.backend.service.UserService;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,12 +35,9 @@ public class UserControllerImpl implements UserController {
     @Override
     @GetMapping("/me")
     @RateLimiter(name = "userRateLimiter")
-    public ResponseEntity<UserDto> findMeByEmail() {
-        String authenticatedUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.info("Received request to get authenticated user's details for email: {}", authenticatedUserEmail);
-
-        UserDto userDto = userService.findByEmail(authenticatedUserEmail);
-        log.info("Successfully retrieved details for user: {}", authenticatedUserEmail);
+    public ResponseEntity<UserDto> findMeByEmail(@AuthenticationPrincipal UserEntity user) {
+        log.info("Received request to get authenticated user's details for email: {}", user.getEmail());
+        UserDto userDto = new UserDto(user.getId(), user.getFirstname(), user.getLastname(), user.getEmail(), user.getRole());
         return ResponseEntity.ok(userDto);
     }
 

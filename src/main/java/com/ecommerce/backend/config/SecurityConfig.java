@@ -42,8 +42,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     log.debug("Configuring HTTP request authorization rules.");
 
-                    auth.requestMatchers("/api/auth/**").permitAll();
-                    log.debug("Permitted unauthenticated access to /api/auth/**.");
+                    auth.requestMatchers("/api/auth/**", "/api/categories/**", "/api/products/**").permitAll();
+                    log.debug("Permitted unauthenticated access to /api/auth, /api/categories and /api/products.");
 
                     auth.anyRequest().authenticated();
                     log.debug("Required authentication for all other requests.");

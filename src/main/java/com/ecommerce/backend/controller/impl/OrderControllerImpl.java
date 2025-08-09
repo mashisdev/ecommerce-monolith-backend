@@ -1,9 +1,11 @@
 package com.ecommerce.backend.controller.impl;
 
+import com.ecommerce.backend.controller.OrderController;
 import com.ecommerce.backend.dto.OrderDto;
 import com.ecommerce.backend.dto.request.OrderRequest;
 import com.ecommerce.backend.entity.user.UserEntity;
 import com.ecommerce.backend.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import jakarta.validation.Valid;
 
 import java.util.UUID;
 
@@ -23,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
-public class OrderControllerImpl {
+public class OrderControllerImpl implements OrderController {
 
     private final OrderService orderService;
 

@@ -2,6 +2,7 @@ package com.ecommerce.backend.controller;
 
 import com.ecommerce.backend.dto.UserDto;
 import com.ecommerce.backend.dto.request.user.UpdateUserRequest;
+import com.ecommerce.backend.entity.user.UserEntity;
 import com.ecommerce.backend.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -48,7 +49,7 @@ public interface UserController {
                             schema = @Schema(implementation = ErrorMessage.class))
             )
     })
-    ResponseEntity<UserDto> findMeByEmail();
+    ResponseEntity<UserDto> findMeByEmail(UserEntity user);
 
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Find user by ID", description = "Retrieves a user by their unique ID. Requires a valid JWT token.")

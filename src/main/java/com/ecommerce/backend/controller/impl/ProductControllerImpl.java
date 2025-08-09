@@ -4,6 +4,7 @@ import com.ecommerce.backend.controller.ProductController;
 import com.ecommerce.backend.dto.ProductDto;
 import com.ecommerce.backend.dto.request.ProductRequest;
 import com.ecommerce.backend.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import jakarta.validation.Valid;
 
 @Slf4j
 @RestController
