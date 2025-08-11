@@ -3,8 +3,11 @@ package com.ecommerce.backend.entity;
 import com.ecommerce.backend.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "addresses")
 public class Address {
