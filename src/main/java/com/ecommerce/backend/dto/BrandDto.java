@@ -1,6 +1,5 @@
 package com.ecommerce.backend.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDto {
+public class BrandDto {
     private Long id;
     private String name;
     private Set<ProductDto> products;

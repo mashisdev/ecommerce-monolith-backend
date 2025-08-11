@@ -21,6 +21,7 @@ public class ProductDto {
     private String imageUrl;
     private BigDecimal unitPrice;
     private Long categoryId;
+    private Long brandId;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
 }
