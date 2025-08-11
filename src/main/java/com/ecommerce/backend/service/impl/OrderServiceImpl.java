@@ -43,6 +43,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final UserMapper userMapper;
 
+    @Override
     @Transactional
     public OrderDto createOrder(OrderRequest request) {
         User user = userRepository.findById(request.userId())
@@ -82,6 +83,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toDto(savedOrder);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public OrderDto getOrderById(UUID orderId) {
         log.info("Fetching order with id: {}", orderId);
@@ -90,6 +92,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toDto(order);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Page<OrderDto> searchOrders(UUID userId, OrderStatus status, String trackingNumber, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
 
@@ -112,6 +115,7 @@ public class OrderServiceImpl implements OrderService {
         return orders.map(orderMapper::toDto);
     }
 
+    @Override
     @Transactional
     public OrderDto updateOrderStatus(UUID orderId, String newStatus) {
         log.info("Updating status for order with id: {} to {}", orderId, newStatus);
@@ -129,6 +133,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
     @Transactional(readOnly = true)
     public boolean isOrderOwner(UUID orderId, UUID userId) {
         return orderRepository.findById(orderId)

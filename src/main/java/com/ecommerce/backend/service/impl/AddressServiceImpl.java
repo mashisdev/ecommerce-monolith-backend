@@ -25,6 +25,7 @@ public class AddressServiceImpl implements AddressService {
     private final UserMapper userMapper;
     private final AddressMapper addressMapper;
 
+    @Override
     @Transactional
     public AddressDto createAddress(CreateAddressRequest request) {
         User user = userRepository.findById(request.userId())
@@ -37,6 +38,7 @@ public class AddressServiceImpl implements AddressService {
         return addressMapper.addressToAddressDto(savedAddress);
     }
 
+    @Override
     @Transactional
     public AddressDto updateAddress(Long id, UpdateAddressRequest request) {
         Address existingAddress = addressRepository.findById(id)

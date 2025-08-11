@@ -22,6 +22,7 @@ public class BrandServiceImpl implements BrandService {
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
 
+    @Override
     @Transactional
     public BrandDto createBrand(String name) {
         log.info("Creating new brand with name: {}", name);

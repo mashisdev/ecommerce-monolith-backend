@@ -31,6 +31,7 @@ public class ProductServiceImpl implements ProductService {
     private final BrandRepository brandRepository;
     private final ProductMapper productMapper;
 
+    @Override
     @Transactional
     public ProductDto createProduct(CreateProductRequest request) {
         log.info("Creating a new product with name: {}", request.name());
@@ -56,6 +57,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toDto(savedProduct);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public ProductDto getProductById(Long productId) {
         log.info("Fetching product with ID: {}", productId);
@@ -91,6 +93,7 @@ public class ProductServiceImpl implements ProductService {
         return products.map(productMapper::toDto);
     }
 
+    @Override
     @Transactional
     public ProductDto updateProduct(Long productId, UpdateProductRequest request) {
         log.info("Updating product with ID: {}", productId);
@@ -117,6 +120,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toDto(updatedProduct);
     }
 
+    @Override
     @Transactional
     public void deleteProduct(Long productId) {
         log.info("Attempting to delete product with ID: {}", productId);
