@@ -10,7 +10,6 @@ import com.ecommerce.backend.entity.order.OrderStatus;
 import com.ecommerce.backend.entity.user.User;
 import com.ecommerce.backend.exception.orders.InvalidOrderStatusException;
 import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
-import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.mapper.OrderMapper;
 import com.ecommerce.backend.mapper.UserMapper;
 import com.ecommerce.backend.repository.OrderRepository;
@@ -26,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -43,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto createOrder(OrderRequest request) {
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new UserNotFoundException("User with id " + request.userId() + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + request.userId() + " not found."));
 
         Order order = new Order();
         order.setUser(userMapper.userToUserEntity(user));
@@ -53,6 +54,7 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal totalPrice = BigDecimal.ZERO;
         int totalQuantity = 0;
 
+        Set<OrderItem> orderItems = new HashSet<>();
         for (OrderItemRequest itemRequest : request.items()) {
             Product product = productRepository.findById(itemRequest.productId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product with id " + itemRequest.productId() + " not found."));
@@ -61,12 +63,15 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setProduct(product);
             orderItem.setQuantity(itemRequest.quantity());
             orderItem.setUnitPrice(product.getUnitPrice());
-            order.add(orderItem);
+
+            orderItem.setOrder(order);
+            orderItems.add(orderItem);
 
             totalPrice = totalPrice.add(orderItem.getUnitPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
             totalQuantity += orderItem.getQuantity();
         }
 
+        order.setOrderItems(orderItems);
         order.setTotalPrice(totalPrice);
         order.setTotalQuantity(totalQuantity);
         Order savedOrder = orderRepository.save(order);
@@ -76,6 +81,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OrderDto getOrderById(Long orderId) {
         log.info("Fetching order with id: {}", orderId);
         Order order = orderRepository.findById(orderId)
@@ -84,6 +90,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<OrderDto> getOrdersByUser(UUID userId, Pageable pageable) {
         log.info("Fetching orders for user with id: {}", userId);
         Page<Order> orderPage = orderRepository.findByUser_Id(userId, pageable);
@@ -91,6 +98,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<OrderDto> getAllOrders(Pageable pageable) {
         log.info("Fetching all orders, page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<Order> orderPage = orderRepository.findAll(pageable);
@@ -116,6 +124,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isOrderOwner(Long orderId, UUID userId) {
         return orderRepository.findById(orderId)
                 .map(order -> order.getUser().getId().equals(userId))
