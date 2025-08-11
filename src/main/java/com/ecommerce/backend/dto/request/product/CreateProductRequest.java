@@ -1,11 +1,11 @@
-package com.ecommerce.backend.dto.request;
+package com.ecommerce.backend.dto.request.product;
 
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
 
-public record ProductRequest(
+public record CreateProductRequest(
         @NotBlank(message = "Product name is required")
         @Size(min = 3, max = 100, message = "Product name must be between 3 and 100 characters")
         String name,

@@ -1,7 +1,7 @@
 package com.ecommerce.backend.mapper;
 
 import com.ecommerce.backend.dto.ProductDto;
-import com.ecommerce.backend.dto.request.ProductRequest;
+import com.ecommerce.backend.dto.request.product.CreateProductRequest;
 import com.ecommerce.backend.entity.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,5 +14,5 @@ public interface ProductMapper {
     @Mapping(target = "brandName", source = "brand.name")
     ProductDto toDto(Product product);
 
-    Product toEntity(ProductRequest request);
+    Product toEntity(CreateProductRequest request);
 }

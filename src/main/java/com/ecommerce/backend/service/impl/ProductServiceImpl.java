@@ -1,7 +1,8 @@
 package com.ecommerce.backend.service.impl;
 
 import com.ecommerce.backend.dto.ProductDto;
-import com.ecommerce.backend.dto.request.ProductRequest;
+import com.ecommerce.backend.dto.request.product.CreateProductRequest;
+import com.ecommerce.backend.dto.request.product.UpdateProductRequest;
 import com.ecommerce.backend.entity.Brand;
 import com.ecommerce.backend.entity.Category;
 import com.ecommerce.backend.entity.Product;
@@ -11,10 +12,12 @@ import com.ecommerce.backend.repository.BrandRepository;
 import com.ecommerce.backend.repository.CategoryRepository;
 import com.ecommerce.backend.repository.ProductRepository;
 import com.ecommerce.backend.service.ProductService;
+import com.ecommerce.backend.specifications.ProductSpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
 
     @Transactional
-    public ProductDto createProduct(ProductRequest request) {
+    public ProductDto createProduct(CreateProductRequest request) {
         log.info("Creating a new product with name: {}", request.name());
 
         Category category = categoryRepository.findById(request.categoryId())
@@ -54,13 +57,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDto> getAllProducts(Pageable pageable) {
-        log.info("Fetching all products, page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<Product> products = productRepository.findAll(pageable);
-        return products.map(productMapper::toDto);
-    }
-
-    @Transactional(readOnly = true)
     public ProductDto getProductById(Long productId) {
         log.info("Fetching product with ID: {}", productId);
         Product product = productRepository.findById(productId)
@@ -68,35 +64,35 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toDto(product);
     }
 
+    @Override
     @Transactional(readOnly = true)
-    public Page<ProductDto> searchProductsByName(String name, Pageable pageable) {
-        log.info("Searching products by name: '{}' with pagination: {}", name, pageable);
-        Page<Product> products = productRepository.findByNameContainingIgnoreCase(name, pageable);
+    public Page<ProductDto> searchProducts(String name, Boolean active, Long categoryId, Long brandId, Pageable pageable) {
+        log.info("Searching products with criteria: name={}, active={}, categoryId={}, brandId={}", name, active, categoryId, brandId);
+
+        Specification<Product> spec = Specification.unrestricted();
+
+        if (name != null && !name.isBlank()) {
+            spec = spec.and(ProductSpecifications.byNameLike(name));
+        }
+
+        if (active != null) {
+            spec = spec.and(ProductSpecifications.byActiveStatus(active));
+        }
+
+        if (categoryId != null) {
+            spec = spec.and(ProductSpecifications.byCategoryId(categoryId));
+        }
+
+        if (brandId != null) {
+            spec = spec.and(ProductSpecifications.byBrandId(brandId));
+        }
+
+        Page<Product> products = productRepository.findAll(spec, pageable);
         return products.map(productMapper::toDto);
     }
 
-    @Override
     @Transactional
-    public void disableById(Long id) {
-        log.info("Disabling product with id: {}", id);
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found."));
-        product.setActive(false);
-        productRepository.save(product);
-    }
-
-    @Override
-    @Transactional
-    public void enableById(Long id) {
-        log.info("Enabling product with id: {}", id);
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found."));
-        product.setActive(true);
-        productRepository.save(product);
-    }
-
-    @Transactional
-    public ProductDto updateProduct(Long productId, ProductRequest request) {
+    public ProductDto updateProduct(Long productId, UpdateProductRequest request) {
         log.info("Updating product with ID: {}", productId);
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " not found."));
@@ -112,7 +108,7 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setImageUrl(request.imageUrl());
         existingProduct.setStock(request.stock());
         existingProduct.setUnitPrice(request.unitPrice());
-        existingProduct.setActive(true);
+        existingProduct.setActive(request.active());
         existingProduct.setCategory(category);
         existingProduct.setBrand(brand);
 

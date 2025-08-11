@@ -16,15 +16,18 @@ import com.ecommerce.backend.repository.OrderRepository;
 import com.ecommerce.backend.repository.ProductRepository;
 import com.ecommerce.backend.repository.user.UserRepository;
 import com.ecommerce.backend.service.OrderService;
+import com.ecommerce.backend.specifications.OrderSpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -40,7 +43,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final UserMapper userMapper;
 
-    @Override
     @Transactional
     public OrderDto createOrder(OrderRequest request) {
         User user = userRepository.findById(request.userId())
@@ -80,34 +82,38 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toDto(savedOrder);
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public OrderDto getOrderById(Long orderId) {
+    public OrderDto getOrderById(UUID orderId) {
         log.info("Fetching order with id: {}", orderId);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderId + " not found."));
         return orderMapper.toDto(order);
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public Page<OrderDto> getOrdersByUser(UUID userId, Pageable pageable) {
-        log.info("Fetching orders for user with id: {}", userId);
-        Page<Order> orderPage = orderRepository.findByUser_Id(userId, pageable);
-        return orderPage.map(orderMapper::toDto);
+    public Page<OrderDto> searchOrders(UUID userId, OrderStatus status, String trackingNumber, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+
+        Specification<Order> spec = Specification.unrestricted();
+
+        if (userId != null) {
+            spec = spec.and(OrderSpecifications.byUserId(userId));
+        }
+        if (status != null) {
+            spec = spec.and(OrderSpecifications.byStatus(status));
+        }
+        if (trackingNumber != null) {
+            spec = spec.and(OrderSpecifications.byOrderTrackingNumber(trackingNumber));
+        }
+        if (startDate != null && endDate != null) {
+            spec = spec.and(OrderSpecifications.byCreationDateBetween(startDate, endDate));
+        }
+
+        Page<Order> orders = orderRepository.findAll(spec, pageable);
+        return orders.map(orderMapper::toDto);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<OrderDto> getAllOrders(Pageable pageable) {
-        log.info("Fetching all orders, page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<Order> orderPage = orderRepository.findAll(pageable);
-        return orderPage.map(orderMapper::toDto);
-    }
-
-    @Override
     @Transactional
-    public OrderDto updateOrderStatus(Long orderId, String newStatus) {
+    public OrderDto updateOrderStatus(UUID orderId, String newStatus) {
         log.info("Updating status for order with id: {} to {}", orderId, newStatus);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderId + " not found."));
@@ -123,9 +129,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public boolean isOrderOwner(Long orderId, UUID userId) {
+    public boolean isOrderOwner(UUID orderId, UUID userId) {
         return orderRepository.findById(orderId)
                 .map(order -> order.getUser().getId().equals(userId))
                 .orElse(false);
@@ -133,26 +138,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void cancelOrder(Long orderId, UUID userId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderId + " not found."));
-
-        if (!order.getUser().getId().equals(userId)) {
-            throw new AccessDeniedException("User is not the owner of this order.");
-        }
-
-        if (order.getStatus() != OrderStatus.PENDING) {
-            throw new InvalidOrderStatusException("Only orders with PENDING status can be cancelled.");
-        }
-
-        order.setStatus(OrderStatus.CANCELLED);
-        orderRepository.save(order);
-        log.info("Order with ID {} has been successfully cancelled by user {}.", orderId, userId);
-    }
-
-    @Override
-    @Transactional
-    public void deleteOrder(Long orderId) {
+    public void deleteOrder(UUID orderId) {
         if (!orderRepository.existsById(orderId)) {
             throw new ResourceNotFoundException("Order with id " + orderId + " not found.");
         }
