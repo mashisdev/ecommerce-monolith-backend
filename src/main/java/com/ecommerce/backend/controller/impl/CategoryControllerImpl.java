@@ -48,6 +48,14 @@ public class CategoryControllerImpl implements CategoryController {
         return ResponseEntity.ok(categories);
     }
 
+    @GetMapping
+    public ResponseEntity<Page<CategoryDto>> searchCategories(
+            @RequestParam String name,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        Page<CategoryDto> categories = categoryService.searchCategoriesByName(name, pageable);
+        return ResponseEntity.ok(categories);
+    }
+
     @PutMapping("/{categoryId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long categoryId, @Valid @RequestBody CategoryRequest request) {
