@@ -2,6 +2,7 @@ package com.ecommerce.backend.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
@@ -20,7 +21,8 @@ public record CreateAddressRequest(
         String state,
 
         @NotBlank(message = "Zip code cannot be blank")
-        @Size(max = 10, message = "Zip code must not exceed 10 characters")
+        @Size(min = 5, max = 10, message = "Zip code must be between 5 and 10 characters")
+        @Pattern(regexp = "^[a-zA-Z0-9\\s-]+$", message = "Zip code can only contain letters, numbers, spaces and hyphens")
         String zipCode,
 
         @NotBlank(message = "Country cannot be blank")

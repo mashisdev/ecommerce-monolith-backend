@@ -10,6 +10,7 @@ import java.util.UUID;
 public record OrderRequest(
         @NotNull(message = "User ID cannot be null")
         UUID userId,
+
         @NotEmpty(message = "Order must contain at least one item")
         List<@Valid OrderItemRequest> items
 ) {}
