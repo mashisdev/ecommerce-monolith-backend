@@ -7,19 +7,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface OrderController {
 
-    ResponseEntity<OrderDto> createOrder(OrderRequest request);
-    ResponseEntity<Page<OrderDto>> getAllOrders(Pageable pageable);
-    ResponseEntity<OrderDto> getOrderById(Long orderId, UserEntity user);
-    ResponseEntity<Page<OrderDto>> getOrdersByUser(
+    ResponseEntity<OrderDto> createOrder(OrderRequest request, UserEntity user);
+    ResponseEntity<OrderDto> getOrderById(UUID orderId, UserEntity user);
+    ResponseEntity<Page<OrderDto>> searchOrders(
             UUID userId,
+            String status,
+            String trackingNumber,
+            LocalDateTime startDate, LocalDateTime endDate,
             Pageable pageable,
             UserEntity user);
-    ResponseEntity<OrderDto> updateOrderStatus(Long orderId,
-                                               String newStatus);
-    void cancelOrder(Long orderId, UserEntity user);
-    void deleteOrder(Long orderId);
+    ResponseEntity<OrderDto> updateOrderStatus(UUID orderId, String newStatus, UserEntity user);
+    ResponseEntity<Void> deleteOrder(UUID orderId, UserEntity user);
 }

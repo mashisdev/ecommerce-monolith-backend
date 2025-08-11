@@ -32,11 +32,18 @@ public class BrandControllerImpl implements BrandController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BrandDto>> getAllBrands(
+    public ResponseEntity<Page<BrandDto>> getBrands(
+            @RequestParam(required = false) String name,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
-        log.info("Fetching all brands with pagination: page={}, size={}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<BrandDto> brands = brandService.getAllBrands(pageable);
-        return ResponseEntity.ok(brands);
+        if (name != null && !name.isBlank()) {
+            log.info("Searching brands by name: {}", name);
+            Page<BrandDto> brands = brandService.searchBrandsByName(name, pageable);
+            return ResponseEntity.ok(brands);
+        } else {
+            log.info("Fetching all brands with pagination: page={}, size={}", pageable.getPageNumber(), pageable.getPageSize());
+            Page<BrandDto> brands = brandService.getAllBrands(pageable);
+            return ResponseEntity.ok(brands);
+        }
     }
 
     @GetMapping("/{brandId}")
@@ -44,14 +51,6 @@ public class BrandControllerImpl implements BrandController {
         log.info("Fetching brand with ID: {}", brandId);
         BrandDto brand = brandService.getBrandById(brandId);
         return ResponseEntity.ok(brand);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<BrandDto>> searchBrands(
-            @RequestParam String name,
-            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
-        Page<BrandDto> brands = brandService.searchBrandsByName(name, pageable);
-        return ResponseEntity.ok(brands);
     }
 
     @PutMapping("/{brandId}")

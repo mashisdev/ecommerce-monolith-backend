@@ -32,28 +32,29 @@ public class CategoryControllerImpl implements CategoryController {
         return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<Page<CategoryDto>> getCategories(
+            @RequestParam(required = false) String name,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        if (name != null && !name.isBlank()) {
+            log.info("Received request to search categories by name: {}", name);
+            Page<CategoryDto> categories = categoryService.searchCategoriesByName(name, pageable);
+            log.info("Successfully retrieved categories matching search term. Total elements: {}", categories.getTotalElements());
+            return ResponseEntity.ok(categories);
+        } else {
+            log.info("Received request to get all categories. Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
+            Page<CategoryDto> categories = categoryService.getAllCategories(pageable);
+            log.info("Successfully retrieved all categories. Total elements: {}", categories.getTotalElements());
+            return ResponseEntity.ok(categories);
+        }
+    }
+
     @GetMapping("/{categoryId}")
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long categoryId) {
         log.info("Received request to get category with ID: {}", categoryId);
         CategoryDto category = categoryService.getCategoryById(categoryId);
         log.info("Successfully retrieved category with ID: {}", categoryId);
         return ResponseEntity.ok(category);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<CategoryDto>> getAllCategories(@PageableDefault(size = 10) Pageable pageable) {
-        log.info("Received request to get all categories. Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<CategoryDto> categories = categoryService.getAllCategories(pageable);
-        log.info("Successfully retrieved categories. Total elements: {}", categories.getTotalElements());
-        return ResponseEntity.ok(categories);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<CategoryDto>> searchCategories(
-            @RequestParam String name,
-            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
-        Page<CategoryDto> categories = categoryService.searchCategoriesByName(name, pageable);
-        return ResponseEntity.ok(categories);
     }
 
     @PutMapping("/{categoryId}")

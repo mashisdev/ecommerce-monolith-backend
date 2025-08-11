@@ -1,6 +1,7 @@
 package com.ecommerce.backend.exception;
 
 import com.ecommerce.backend.exception.orders.InvalidOrderStatusException;
+import com.ecommerce.backend.exception.resources.UnauthorizedActionException;
 import com.ecommerce.backend.exception.resources.ResourceAlreadyExistsException;
 import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
 import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
@@ -86,7 +87,7 @@ public class GlobalExceptionHandler {
     }
 
     // --- Account Verification Exception Handlers ---
-    // Handles AccountNotVerifiedException, returning 403 FORBIDDEN.
+    // Handles AccountNotVerifiedException, returning 403 FORBIDDEN
     @ExceptionHandler(AccountNotVerifiedException.class)
     public ResponseEntity<ErrorMessage> handleAccountNotVerified(AccountNotVerifiedException ex, HttpServletRequest request) {
         log.warn("Account not verified: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
@@ -94,7 +95,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
-    // Handles InvalidVerificationCodeException, returning 400 BAD REQUEST.
+    // Handles InvalidVerificationCodeException, returning 400 BAD REQUEST
     @ExceptionHandler(InvalidVerificationCodeException.class)
     public ResponseEntity<ErrorMessage> handleInvalidVerificationCode(InvalidVerificationCodeException ex, HttpServletRequest request) {
         log.warn("Invalid verification code: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
@@ -102,7 +103,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    // Handles VerificationCodeExpiredException, returning 410 GONE.
+    // Handles VerificationCodeExpiredException, returning 410 GONE
     @ExceptionHandler(VerificationCodeExpiredException.class)
     public ResponseEntity<ErrorMessage> handleVerificationCodeExpired(VerificationCodeExpiredException ex, HttpServletRequest request) {
         log.warn("Verification code expired: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
@@ -110,7 +111,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.GONE).body(error);
     }
 
-    // Handles AccountAlreadyVerifiedException, returning 409 CONFLICT.
+    // Handles AccountAlreadyVerifiedException, returning 409 CONFLICT
     @ExceptionHandler(AccountAlreadyVerifiedException.class)
     public ResponseEntity<ErrorMessage> handleAccountAlreadyVerified(AccountAlreadyVerifiedException ex, HttpServletRequest request) {
         log.warn("Account already verified: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
@@ -118,7 +119,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    // Handles VerificationCodeStillValidException, returning 409 CONFLICT.
+    // Handles VerificationCodeStillValidException, returning 409 CONFLICT
     @ExceptionHandler(VerificationCodeStillValidException.class)
     public ResponseEntity<ErrorMessage> handleVerificationCodeStillValid(VerificationCodeStillValidException ex, HttpServletRequest request) {
         log.warn("Verification code still valid: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
@@ -127,7 +128,7 @@ public class GlobalExceptionHandler {
     }
 
     // --- Password Exception Handlers ---
-    // Handles PasswordResetTokenExpiredException, returning 410 GONE.
+    // Handles PasswordResetTokenExpiredException, returning 410 GONE
     @ExceptionHandler(PasswordResetTokenExpiredException.class)
     public ResponseEntity<ErrorMessage> handlePasswordRefreshTokenExpired(PasswordResetTokenExpiredException ex, HttpServletRequest request) {
         log.warn("Password reset token expired: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
@@ -135,7 +136,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.GONE).body(error);
     }
 
-    // Handles HttpMediaTypeNotSupportedException, returning 415 UNSUPPORTED MEDIA TYPE.
+    // Handles HttpMediaTypeNotSupportedException, returning 415 UNSUPPORTED MEDIA TYPE
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<ErrorMessage> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpServletRequest request) {
         String supportedMediaTypes = ex.getSupportedMediaTypes().stream()
@@ -155,7 +156,7 @@ public class GlobalExceptionHandler {
     }
 
     // --- Resources Exception Handlers ---
-    // Handles ResourceNotFoundException, returning 404 NOT FOUND.
+    // Handles ResourceNotFoundException, returning 404 NOT FOUND
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorMessage> handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request) {
         log.warn("Resource not found for path: {}. Error: {}", request.getRequestURI(), ex.getMessage(), ex);
@@ -168,7 +169,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    // Handles ResourceAlreadyExistsException, returning 409 CONFLICT.
+    // Handles ResourceAlreadyExistsException, returning 409 CONFLICT
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ErrorMessage> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex, HttpServletRequest request) {
         log.warn("Resource already exists for path: {}. Error: {}", request.getRequestURI(), ex.getMessage(), ex);
@@ -194,6 +195,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    // Handles UnauthorizedActionException, returning 403 FORBIDDEN
+    @ExceptionHandler(UnauthorizedActionException.class)
+    public ResponseEntity<ErrorMessage> handleUnauthorizedAction(UnauthorizedActionException ex, HttpServletRequest request) {
+        log.warn("Unauthorized action detected: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.FORBIDDEN.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
     // Handles HttpRequestMethodNotSupportedException, returning 405 METHOD NOT ALLOWED
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorMessage> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
@@ -208,7 +222,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(error);
     }
 
-    // Groups various exceptions that typically result in a 400 BAD REQUEST status
+    // Groups various exceptions that typically result in a 400 BAD REQUEST
     @ExceptionHandler({
             HttpMessageNotReadableException.class,         // Request body is missing or malformed
             MissingRequestHeaderException.class,           // Required HTTP header is missing

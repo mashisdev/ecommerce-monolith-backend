@@ -12,7 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "categories", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
+@Table(name = "brands", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 @EntityListeners(AuditingEntityListener.class)
 public class Brand {
 

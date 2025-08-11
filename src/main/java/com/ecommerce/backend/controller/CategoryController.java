@@ -9,9 +9,8 @@ import org.springframework.http.ResponseEntity;
 public interface CategoryController {
 
     ResponseEntity<CategoryDto> createCategory(CategoryRequest request);
-    ResponseEntity<Page<CategoryDto>> getAllCategories(Pageable pageable);
+    ResponseEntity<Page<CategoryDto>> getCategories(String name, Pageable pageable);
     ResponseEntity<CategoryDto> getCategoryById(Long categoryId);
-    ResponseEntity<Page<CategoryDto>> searchCategories(String name, Pageable pageable);
     ResponseEntity<CategoryDto> updateCategory(Long categoryId, CategoryRequest request);
     ResponseEntity<Void> deleteCategory(Long categoryId);
 }
