@@ -1,9 +1,6 @@
 package com.ecommerce.backend.dto.request;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
@@ -19,6 +16,9 @@ public record ProductRequest(
         @URL(message = "Invalid image URL format")
         @Size(max = 255, message = "Image URL must not exceed 255 characters")
         String imageUrl,
+
+        @Min(value = 0, message = "Stock cannot be negative")
+        int stock,
 
         @NotNull(message = "Unit price is required")
         @DecimalMin(value = "0.01", message = "Unit price must be greater than or equal to 0.01")

@@ -10,10 +10,9 @@ public interface ProductService {
     ProductDto createProduct(ProductRequest request);
     ProductDto getProductById(Long productId);
     Page<ProductDto> getAllProducts(Pageable pageable);
-    Page<ProductDto> getProductsByCategory(Long categoryId, Pageable pageable);
     void disableById(Long id);
     void enableById(Long id);
-    ProductDto searchProduct(String searchValue);
+    Page<ProductDto> searchProductsByName(String name, Pageable pageable);
     ProductDto updateProduct(Long productId, ProductRequest request);
     void deleteProduct(Long productId);
 }

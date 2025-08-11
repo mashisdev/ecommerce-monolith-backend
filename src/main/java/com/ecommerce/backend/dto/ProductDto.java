@@ -18,9 +18,10 @@ public class ProductDto {
     private String description;
     private boolean active;
     private String imageUrl;
+    private int stock;
     private BigDecimal unitPrice;
-    private Long categoryId;
-    private Long brandId;
+    private String categoryName;
+    private String brandName;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
 }

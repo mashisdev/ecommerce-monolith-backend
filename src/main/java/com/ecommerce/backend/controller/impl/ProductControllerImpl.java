@@ -26,35 +26,33 @@ public class ProductControllerImpl implements ProductController {
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductRequest request) {
-        log.info("Received request to create a new product.");
+        log.info("Received request to create a new product: {}", request.name());
         ProductDto newProduct = productService.createProduct(request);
-        log.info("Successfully created product with ID: {}", newProduct.getId());
+        log.info("Product created with ID: {}", newProduct.getId());
         return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ProductDto>> getAllProducts(
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        log.info("Fetching all products with pagination: page={}, size={}", pageable.getPageNumber(), pageable.getPageSize());
+        Page<ProductDto> products = productService.getAllProducts(pageable);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
-        log.info("Received request to get product with ID: {}", productId);
+        log.info("Fetching product with ID: {}", productId);
         ProductDto product = productService.getProductById(productId);
-        log.info("Successfully retrieved product with ID: {}", productId);
         return ResponseEntity.ok(product);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<ProductDto>> getAllProducts(@PageableDefault(size = 10) Pageable pageable) {
-        log.info("Received request to get all products. Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<ProductDto> products = productService.getAllProducts(pageable);
-        log.info("Successfully retrieved products. Total elements: {}", products.getTotalElements());
-        return ResponseEntity.ok(products);
-    }
-
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<Page<ProductDto>> getProductsByCategory(
-            @PathVariable Long categoryId,
-            @PageableDefault(size = 10) Pageable pageable) {
-        log.info("Received request to get products by category ID: {}. Page: {}, Size: {}", categoryId, pageable.getPageNumber(), pageable.getPageSize());
-        Page<ProductDto> products = productService.getProductsByCategory(categoryId, pageable);
-        log.info("Successfully retrieved products for category ID: {}. Total elements: {}", categoryId, products.getTotalElements());
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProductDto>> searchProducts(
+            @RequestParam String name,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        log.info("Searching products by name: '{}'", name);
+        Page<ProductDto> products = productService.searchProductsByName(name, pageable);
         return ResponseEntity.ok(products);
     }
 
@@ -90,12 +88,5 @@ public class ProductControllerImpl implements ProductController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enableProduct(@PathVariable Long productId) {
         productService.enableById(productId);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<ProductDto> searchProduct(@RequestParam String searchValue) {
-        log.info("Received request to search for product with value: {}", searchValue);
-        ProductDto product = productService.searchProduct(searchValue);
-        return ResponseEntity.ok(product);
     }
 }

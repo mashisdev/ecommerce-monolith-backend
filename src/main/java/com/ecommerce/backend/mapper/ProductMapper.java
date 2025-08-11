@@ -7,16 +7,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
-import java.util.List;
-
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProductMapper {
 
-    @Mapping(target = "categoryId", source = "category.id")
+    @Mapping(target = "categoryName", source = "category.name")
+    @Mapping(target = "brandName", source = "brand.name")
     ProductDto toDto(Product product);
 
-    @Mapping(target = "category", ignore = true)
     Product toEntity(ProductRequest request);
-
-    List<ProductDto> toDtoList(List<Product> products);
 }
