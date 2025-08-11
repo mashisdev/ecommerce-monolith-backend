@@ -2,7 +2,8 @@ package com.ecommerce.backend.controller.impl;
 
 import com.ecommerce.backend.controller.ProductController;
 import com.ecommerce.backend.dto.ProductDto;
-import com.ecommerce.backend.dto.request.ProductRequest;
+import com.ecommerce.backend.dto.request.product.CreateProductRequest;
+import com.ecommerce.backend.dto.request.product.UpdateProductRequest;
 import com.ecommerce.backend.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,19 +26,11 @@ public class ProductControllerImpl implements ProductController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductRequest request) {
+    public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody CreateProductRequest request) {
         log.info("Received request to create a new product: {}", request.name());
         ProductDto newProduct = productService.createProduct(request);
         log.info("Product created with ID: {}", newProduct.getId());
         return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<ProductDto>> getAllProducts(
-            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
-        log.info("Fetching all products with pagination: page={}, size={}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<ProductDto> products = productService.getAllProducts(pageable);
-        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{productId}")
@@ -47,12 +40,15 @@ public class ProductControllerImpl implements ProductController {
         return ResponseEntity.ok(product);
     }
 
-    @GetMapping("/search")
+    @GetMapping
     public ResponseEntity<Page<ProductDto>> searchProducts(
-            @RequestParam String name,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long brandId,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
-        log.info("Searching products by name: '{}'", name);
-        Page<ProductDto> products = productService.searchProductsByName(name, pageable);
+        log.info("Searching products with criteria: name='{}', active={}, categoryId={}, brandId={}", name, active, categoryId, brandId);
+        Page<ProductDto> products = productService.searchProducts(name, active, categoryId, brandId, pageable);
         return ResponseEntity.ok(products);
     }
 
@@ -60,10 +56,9 @@ public class ProductControllerImpl implements ProductController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ProductDto> updateProduct(
             @PathVariable Long productId,
-            @Valid @RequestBody ProductRequest request) {
+            @Valid @RequestBody UpdateProductRequest request) {
         log.info("Received request to update product with ID: {}", productId);
         ProductDto updatedProduct = productService.updateProduct(productId, request);
-        log.info("Successfully updated product with ID: {}", productId);
         return ResponseEntity.ok(updatedProduct);
     }
 
@@ -72,21 +67,6 @@ public class ProductControllerImpl implements ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         log.info("Received request to delete product with ID: {}", productId);
         productService.deleteProduct(productId);
-        log.info("Successfully deleted product with ID: {}", productId);
         return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{productId}/disable")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void disableProduct(@PathVariable Long productId) {
-        productService.disableById(productId);
-    }
-
-    @PutMapping("/{productId}/enable")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void enableProduct(@PathVariable Long productId) {
-        productService.enableById(productId);
     }
 }
