@@ -1,13 +1,10 @@
-package com.ecommerce.backend.dto.request;
+package com.ecommerce.backend.dto.request.address;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import java.util.UUID;
-
-public record CreateAddressRequest(
+public record UpdateAddressRequest(
         @NotBlank(message = "Street cannot be blank")
         @Size(max = 100, message = "Street must not exceed 100 characters")
         String street,
@@ -27,8 +24,5 @@ public record CreateAddressRequest(
 
         @NotBlank(message = "Country cannot be blank")
         @Size(max = 50, message = "Country must not exceed 50 characters")
-        String country,
-
-        @NotNull(message = "User ID cannot be null")
-        UUID userId
+        String country
 ) {}

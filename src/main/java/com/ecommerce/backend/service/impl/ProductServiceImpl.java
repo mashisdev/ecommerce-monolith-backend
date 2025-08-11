@@ -4,8 +4,7 @@ import com.ecommerce.backend.dto.ProductDto;
 import com.ecommerce.backend.dto.request.ProductRequest;
 import com.ecommerce.backend.entity.Category;
 import com.ecommerce.backend.entity.Product;
-import com.ecommerce.backend.exception.category.CategoryNotFoundException;
-import com.ecommerce.backend.exception.product.ProductNotFoundException;
+import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
 import com.ecommerce.backend.mapper.ProductMapper;
 import com.ecommerce.backend.repository.CategoryRepository;
 import com.ecommerce.backend.repository.ProductRepository;
@@ -31,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto createProduct(ProductRequest request) {
         log.info("Creating new product with name: {}", request.name());
         Category category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new CategoryNotFoundException("Category with id " + request.categoryId() + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + request.categoryId() + " not found."));
 
         Product product = productMapper.toEntity(request);
         product.setCategory(category);
@@ -45,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto getProductById(Long productId) {
         log.info("Fetching product with id: {}", productId);
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product with id " + productId + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " not found."));
         return productMapper.toDto(product);
     }
 
@@ -68,7 +67,7 @@ public class ProductServiceImpl implements ProductService {
     public void disableById(Long id) {
         log.info("Disabling product with id: {}", id);
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product with id " + id + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found."));
         product.setActive(false);
         productRepository.save(product);
     }
@@ -78,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
     public void enableById(Long id) {
         log.info("Enabling product with id: {}", id);
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product with id " + id + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found."));
         product.setActive(true);
         productRepository.save(product);
     }
@@ -87,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto searchProduct(String searchValue) {
         log.info("Searching for product with value: {}", searchValue);
         Product product = productRepository.findByNameContainingIgnoreCase(searchValue)
-                .orElseThrow(() -> new ProductNotFoundException("Product with search value '" + searchValue + "' not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product with search value '" + searchValue + "' not found."));
         return productMapper.toDto(product);
     }
 
@@ -96,9 +95,9 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto updateProduct(Long productId, ProductRequest request) {
         log.info("Updating product with id: {}", productId);
         Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product with id " + productId + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " not found."));
         Category category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new CategoryNotFoundException("Category with id " + request.categoryId() + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + request.categoryId() + " not found."));
 
         existingProduct.setName(request.name());
         existingProduct.setDescription(request.description());
@@ -115,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long productId) {
         log.info("Deleting product with id: {}", productId);
         if (!productRepository.existsById(productId)) {
-            throw new ProductNotFoundException("Product with id " + productId + " not found.");
+            throw new ResourceNotFoundException("Product with id " + productId + " not found.");
         }
         productRepository.deleteById(productId);
     }

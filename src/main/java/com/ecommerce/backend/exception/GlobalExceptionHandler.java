@@ -1,11 +1,8 @@
 package com.ecommerce.backend.exception;
 
-import com.ecommerce.backend.exception.address.AddressNotFoundException;
-import com.ecommerce.backend.exception.category.CategoryAlreadyExistsException;
-import com.ecommerce.backend.exception.category.CategoryNotFoundException;
 import com.ecommerce.backend.exception.orders.InvalidOrderStatusException;
-import com.ecommerce.backend.exception.orders.OrderNotFoundException;
-import com.ecommerce.backend.exception.product.ProductNotFoundException;
+import com.ecommerce.backend.exception.resources.ResourceAlreadyExistsException;
+import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
 import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
 import com.ecommerce.backend.exception.user.UserAlreadyRegisteredException;
 import com.ecommerce.backend.exception.user.UserNotFoundException;
@@ -157,11 +154,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(error);
     }
 
-    // --- Category Exception Handlers ---
-    // Handles CategoryNotFoundException, returning 404 NOT FOUND
-    @ExceptionHandler(CategoryNotFoundException.class)
-    public ResponseEntity<ErrorMessage> handleCategoryNotFound(CategoryNotFoundException ex, HttpServletRequest request) {
-        log.warn("Category not found: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+    // --- Resources Exception Handlers ---
+    // Handles ResourceNotFoundException, returning 404 NOT FOUND.
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request) {
+        log.warn("Resource not found for path: {}. Error: {}", request.getRequestURI(), ex.getMessage(), ex);
         ErrorMessage error = new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
                 ex,
@@ -171,10 +168,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    // Handles CategoryAlreadyExistsException, returning 409 CONFLICT
-    @ExceptionHandler(CategoryAlreadyExistsException.class)
-    public ResponseEntity<ErrorMessage> handleCategoryAlreadyExists(CategoryAlreadyExistsException ex, HttpServletRequest request) {
-        log.warn("Category already exists: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+    // Handles ResourceAlreadyExistsException, returning 409 CONFLICT.
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<ErrorMessage> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex, HttpServletRequest request) {
+        log.warn("Resource already exists for path: {}. Error: {}", request.getRequestURI(), ex.getMessage(), ex);
         ErrorMessage error = new ErrorMessage(
                 HttpStatus.CONFLICT.value(),
                 ex,
@@ -184,46 +181,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    // --- Address Exception Handlers ---
-    // Handles AddressNotFoundException, returning 404 NOT FOUND
-    @ExceptionHandler(AddressNotFoundException.class)
-    public ResponseEntity<ErrorMessage> handleAddressNotFound(AddressNotFoundException ex, HttpServletRequest request) {
-        log.warn("Address not found: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
-        ErrorMessage error = new ErrorMessage(
-                HttpStatus.NOT_FOUND.value(),
-                ex,
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-    }
-
-    // --- Product Exception Handlers ---
-    // Handles ProductNotFoundException, returning 404 NOT FOUND
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ErrorMessage> handleProductNotFound(ProductNotFoundException ex, HttpServletRequest request) {
-        log.warn("Product not found: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
-        ErrorMessage error = new ErrorMessage(
-                HttpStatus.NOT_FOUND.value(),
-                ex,
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-    }
-
-    // --- Orders Exception Handlers ---
-    @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseEntity<ErrorMessage> handleOrderNotFound(OrderNotFoundException ex, HttpServletRequest request) {
-        log.warn("Order not found: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
-        ErrorMessage error = new ErrorMessage(
-                HttpStatus.NOT_FOUND.value(),
-                ex,
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-    }
+    // Handles InvalidOrderStatusException, returning 400 BAD REQUEST.
     @ExceptionHandler(InvalidOrderStatusException.class)
     public ResponseEntity<ErrorMessage> handleInvalidOrderStatus(InvalidOrderStatusException ex, HttpServletRequest request) {
         log.warn("Invalid order status: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
@@ -299,7 +257,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    // Handles JWT Exceptions
+    // Handles JWT Exceptions, returning 401 UNAUTHORIZED
     @ExceptionHandler({
             MalformedJwtException.class,
             SignatureException.class,
@@ -343,7 +301,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
-    // Handler for @Valid validation errors (MethodArgumentNotValidException)
+    // Handles MethodArgumentNotValidException, returning 400 BAD REQUEST
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessage> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
@@ -361,7 +319,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.getStatusCode()).body(error);
     }
 
-    // Handler for AuthorizationDeniedException (Access Denied)
+    // Handles AuthorizationDeniedException, returning 403 FORBIDDEN
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<ErrorMessage> handleAuthorizationDeniedException(AuthorizationDeniedException ex, HttpServletRequest request) {
         log.warn("Authorization denied for user accessing path: {} with message: {}", request.getRequestURI(), ex.getMessage(), ex);
@@ -374,7 +332,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
-    // RateLimiter exception
+    // Handles RequestNotPermitted, returning 429 TOO MANY REQUESTS
     @ExceptionHandler(RequestNotPermitted.class)
     public ResponseEntity<ErrorMessage> handleRequestNotPermitted(RequestNotPermitted ex, HttpServletRequest request) {
         log.warn("Rate limit exceeded: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);

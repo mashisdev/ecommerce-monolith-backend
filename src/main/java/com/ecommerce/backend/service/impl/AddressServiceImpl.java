@@ -1,11 +1,11 @@
 package com.ecommerce.backend.service.impl;
 
 import com.ecommerce.backend.dto.AddressDto;
-import com.ecommerce.backend.dto.request.CreateAddressRequest;
-import com.ecommerce.backend.dto.request.UpdateAddressRequest;
+import com.ecommerce.backend.dto.request.address.CreateAddressRequest;
+import com.ecommerce.backend.dto.request.address.UpdateAddressRequest;
 import com.ecommerce.backend.entity.Address;
 import com.ecommerce.backend.entity.user.User;
-import com.ecommerce.backend.exception.address.AddressNotFoundException;
+import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
 import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.mapper.AddressMapper;
 import com.ecommerce.backend.mapper.UserMapper;
@@ -41,7 +41,7 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     public AddressDto updateAddress(Long id, UpdateAddressRequest request) {
         Address existingAddress = addressRepository.findById(id)
-                .orElseThrow(() -> new AddressNotFoundException("Address with id " + id + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Address with id " + id + " not found."));
 
         existingAddress.setStreet(request.street());
         existingAddress.setCity(request.city());

@@ -9,8 +9,7 @@ import com.ecommerce.backend.entity.order.Order;
 import com.ecommerce.backend.entity.order.OrderStatus;
 import com.ecommerce.backend.entity.user.User;
 import com.ecommerce.backend.exception.orders.InvalidOrderStatusException;
-import com.ecommerce.backend.exception.orders.OrderNotFoundException;
-import com.ecommerce.backend.exception.product.ProductNotFoundException;
+import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
 import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.mapper.OrderMapper;
 import com.ecommerce.backend.mapper.UserMapper;
@@ -56,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderItemRequest itemRequest : request.items()) {
             Product product = productRepository.findById(itemRequest.productId())
-                    .orElseThrow(() -> new ProductNotFoundException("Product with id " + itemRequest.productId() + " not found."));
+                    .orElseThrow(() -> new ResourceNotFoundException("Product with id " + itemRequest.productId() + " not found."));
 
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
@@ -80,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto getOrderById(Long orderId) {
         log.info("Fetching order with id: {}", orderId);
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order with id " + orderId + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderId + " not found."));
         return orderMapper.toDto(order);
     }
 
@@ -103,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto updateOrderStatus(Long orderId, String newStatus) {
         log.info("Updating status for order with id: {} to {}", orderId, newStatus);
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order with id " + orderId + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderId + " not found."));
 
         try {
             OrderStatus status = OrderStatus.valueOf(newStatus.toUpperCase());
@@ -127,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void cancelOrder(Long orderId, UUID userId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order with id " + orderId + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderId + " not found."));
 
         if (!order.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("User is not the owner of this order.");
@@ -146,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void deleteOrder(Long orderId) {
         if (!orderRepository.existsById(orderId)) {
-            throw new OrderNotFoundException("Order with id " + orderId + " not found.");
+            throw new ResourceNotFoundException("Order with id " + orderId + " not found.");
         }
 
         orderRepository.deleteById(orderId);

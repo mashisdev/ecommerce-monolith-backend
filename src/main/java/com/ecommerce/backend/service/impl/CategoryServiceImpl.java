@@ -21,7 +21,6 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    @Override
     public CategoryDto createCategory(String name) {
         Optional<Category> existingCategory = categoryRepository.findByName(name);
         if (existingCategory.isPresent()) {
@@ -35,20 +34,17 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.categoryToCategoryDto(savedCategory);
     }
 
-    @Override
     public CategoryDto getCategoryById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException("Category with ID '" + categoryId + "' not found."));
         return categoryMapper.categoryToCategoryDto(category);
     }
 
-    @Override
     public Page<CategoryDto> getAllCategories(Pageable pageable) {
         Page<Category> categoryPage = categoryRepository.findAll(pageable);
         return categoryPage.map(categoryMapper::categoryToCategoryDto);
     }
 
-    @Override
     public CategoryDto updateCategory(Long categoryId, String name) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException("Category with ID '" + categoryId + "' not found."));
@@ -63,7 +59,11 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.categoryToCategoryDto(updatedCategory);
     }
 
-    @Override
+    public Page<CategoryDto> searchCategoriesByName(String name, Pageable pageable) {
+        return categoryRepository.findByNameContainingIgnoreCase(name, pageable)
+                .map(categoryMapper::categoryToCategoryDto);
+    }
+
     public void deleteCategory(Long categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
             throw new CategoryNotFoundException("Category with ID '" + categoryId + "' not found.");

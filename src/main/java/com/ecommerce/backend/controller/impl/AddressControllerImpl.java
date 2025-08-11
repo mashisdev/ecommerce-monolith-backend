@@ -2,8 +2,8 @@ package com.ecommerce.backend.controller.impl;
 
 import com.ecommerce.backend.controller.AddressController;
 import com.ecommerce.backend.dto.AddressDto;
-import com.ecommerce.backend.dto.request.CreateAddressRequest;
-import com.ecommerce.backend.dto.request.UpdateAddressRequest;
+import com.ecommerce.backend.dto.request.address.CreateAddressRequest;
+import com.ecommerce.backend.dto.request.address.UpdateAddressRequest;
 import com.ecommerce.backend.service.AddressService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
