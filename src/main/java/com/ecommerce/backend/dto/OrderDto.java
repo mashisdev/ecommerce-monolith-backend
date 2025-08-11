@@ -1,5 +1,8 @@
 package com.ecommerce.backend.dto;
 
+import com.ecommerce.backend.entity.order.OrderStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,11 +16,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDto {
-    private Long id;
+    private UUID id;
     private String orderTrackingNumber;
     private int totalQuantity;
     private BigDecimal totalPrice;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private UUID userId;
