@@ -5,8 +5,8 @@ import com.ecommerce.backend.dto.OrderDto;
 import com.ecommerce.backend.dto.request.OrderRequest;
 import com.ecommerce.backend.entity.order.OrderStatus;
 import com.ecommerce.backend.entity.user.UserEntity;
-import com.ecommerce.backend.exception.orders.InvalidOrderStatusException;
-import com.ecommerce.backend.exception.resources.UnauthorizedActionException;
+import com.ecommerce.backend.exception.order.InvalidOrderStatusException;
+import com.ecommerce.backend.exception.resource.UnauthorizedActionException;
 import com.ecommerce.backend.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class OrderControllerImpl implements OrderController {
     public ResponseEntity<OrderDto> getOrderById(@PathVariable UUID orderId,
                                                  @AuthenticationPrincipal UserEntity user) {
         log.info("User {} is fetching order with ID: {}", user.getId(), orderId);
-        if (!"ADMIN".equals(user.getRole()) && !orderService.isOrderOwner(orderId, user.getId())) {
+        if (!"ADMIN".equals(user.getRole().toString()) && !orderService.isOrderOwner(orderId, user.getId())) {
             throw new UnauthorizedActionException("You are not authorized to view this order.");
         }
         OrderDto order = orderService.getOrderById(orderId);
@@ -67,7 +67,7 @@ public class OrderControllerImpl implements OrderController {
             @PageableDefault(size = 10, sort = "createdDate") Pageable pageable,
             @AuthenticationPrincipal UserEntity user) {
 
-        if (!"ADMIN".equals(user.getRole())) {
+        if (!"ADMIN".equals(user.getRole().toString())) {
             if (userId != null && !userId.equals(user.getId())) {
                 throw new UnauthorizedActionException("You can only search for your own orders.");
             }
@@ -91,7 +91,7 @@ public class OrderControllerImpl implements OrderController {
     public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable UUID orderId,
                                                       @RequestParam String newStatus,
                                                       @AuthenticationPrincipal UserEntity user) {
-        if ("ADMIN".equals(user.getRole())) {
+        if ("ADMIN".equals(user.getRole().toString())) {
             log.info("ADMIN is updating order {} status to: {}", orderId, newStatus);
             OrderDto updatedOrder = orderService.updateOrderStatus(orderId, newStatus);
             return ResponseEntity.ok(updatedOrder);
@@ -117,7 +117,7 @@ public class OrderControllerImpl implements OrderController {
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable UUID orderId,
                                             @AuthenticationPrincipal UserEntity user) {
-        if ("ADMIN".equals(user.getRole())) {
+        if ("ADMIN".equals(user.getRole().toString())) {
             log.info("ADMIN is deleting order with ID: {}", orderId);
             orderService.deleteOrder(orderId);
             return ResponseEntity.noContent().build();

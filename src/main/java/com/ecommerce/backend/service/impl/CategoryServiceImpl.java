@@ -2,8 +2,8 @@ package com.ecommerce.backend.service.impl;
 
 import com.ecommerce.backend.dto.CategoryDto;
 import com.ecommerce.backend.entity.Category;
-import com.ecommerce.backend.exception.resources.ResourceAlreadyExistsException;
-import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
+import com.ecommerce.backend.exception.resource.ResourceAlreadyExistsException;
+import com.ecommerce.backend.exception.resource.ResourceNotFoundException;
 import com.ecommerce.backend.mapper.CategoryMapper;
 import com.ecommerce.backend.repository.CategoryRepository;
 import com.ecommerce.backend.service.CategoryService;

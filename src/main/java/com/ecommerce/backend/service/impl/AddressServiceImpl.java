@@ -5,7 +5,7 @@ import com.ecommerce.backend.dto.request.address.CreateAddressRequest;
 import com.ecommerce.backend.dto.request.address.UpdateAddressRequest;
 import com.ecommerce.backend.entity.Address;
 import com.ecommerce.backend.entity.user.User;
-import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
+import com.ecommerce.backend.exception.resource.ResourceNotFoundException;
 import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.mapper.AddressMapper;
 import com.ecommerce.backend.mapper.UserMapper;

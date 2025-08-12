@@ -6,7 +6,7 @@ import com.ecommerce.backend.dto.request.product.UpdateProductRequest;
 import com.ecommerce.backend.entity.Brand;
 import com.ecommerce.backend.entity.Category;
 import com.ecommerce.backend.entity.Product;
-import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
+import com.ecommerce.backend.exception.resource.ResourceNotFoundException;
 import com.ecommerce.backend.mapper.ProductMapper;
 import com.ecommerce.backend.repository.BrandRepository;
 import com.ecommerce.backend.repository.CategoryRepository;

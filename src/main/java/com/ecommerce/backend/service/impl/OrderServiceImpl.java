@@ -8,8 +8,10 @@ import com.ecommerce.backend.entity.Product;
 import com.ecommerce.backend.entity.order.Order;
 import com.ecommerce.backend.entity.order.OrderStatus;
 import com.ecommerce.backend.entity.user.User;
-import com.ecommerce.backend.exception.orders.InvalidOrderStatusException;
-import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
+import com.ecommerce.backend.exception.product.InsufficientStockException;
+import com.ecommerce.backend.exception.order.InvalidOrderStatusException;
+import com.ecommerce.backend.exception.resource.ResourceNotFoundException;
+import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.mapper.OrderMapper;
 import com.ecommerce.backend.mapper.UserMapper;
 import com.ecommerce.backend.repository.OrderRepository;
@@ -22,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto createOrder(OrderRequest request) {
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("User with id " + request.userId() + " not found."));
+                .orElseThrow(() -> new UserNotFoundException("User with id " + request.userId() + " not found."));
 
         Order order = new Order();
         order.setUser(userMapper.userToUserEntity(user));
@@ -61,6 +62,11 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItemRequest itemRequest : request.items()) {
             Product product = productRepository.findById(itemRequest.productId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product with id " + itemRequest.productId() + " not found."));
+
+            if (product.getStock() < itemRequest.quantity()) {
+                throw new InsufficientStockException("Insufficient stock for product: " + product.getName());
+            }
+            product.setStock(product.getStock() - itemRequest.quantity());
 
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
@@ -122,8 +128,21 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderId + " not found."));
 
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new InvalidOrderStatusException("Cannot update the status of a cancelled order.");
+        }
+
         try {
             OrderStatus status = OrderStatus.valueOf(newStatus.toUpperCase());
+
+            if (status == OrderStatus.CANCELLED) {
+                log.info("Cancelling order {}. Returning stock to inventory.", orderId);
+                for (OrderItem item : order.getOrderItems()) {
+                    Product product = item.getProduct();
+                    product.setStock(product.getStock() + item.getQuantity());
+                }
+            }
+
             order.setStatus(status);
             Order updatedOrder = orderRepository.save(order);
             log.info("Order {} status updated successfully.", orderId);

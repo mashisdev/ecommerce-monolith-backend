@@ -1,9 +1,10 @@
 package com.ecommerce.backend.exception;
 
-import com.ecommerce.backend.exception.orders.InvalidOrderStatusException;
-import com.ecommerce.backend.exception.resources.UnauthorizedActionException;
-import com.ecommerce.backend.exception.resources.ResourceAlreadyExistsException;
-import com.ecommerce.backend.exception.resources.ResourceNotFoundException;
+import com.ecommerce.backend.exception.order.InvalidOrderStatusException;
+import com.ecommerce.backend.exception.product.InsufficientStockException;
+import com.ecommerce.backend.exception.resource.UnauthorizedActionException;
+import com.ecommerce.backend.exception.resource.ResourceAlreadyExistsException;
+import com.ecommerce.backend.exception.resource.ResourceNotFoundException;
 import com.ecommerce.backend.exception.user.NotAllowedToChangeCredentialsException;
 import com.ecommerce.backend.exception.user.UserAlreadyRegisteredException;
 import com.ecommerce.backend.exception.user.UserNotFoundException;
@@ -186,6 +187,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidOrderStatusException.class)
     public ResponseEntity<ErrorMessage> handleInvalidOrderStatus(InvalidOrderStatusException ex, HttpServletRequest request) {
         log.warn("Invalid order status: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    // Handles InsufficientStockException, returning 400 BAD REQUEST.
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorMessage> handleInsufficientStockException(InsufficientStockException ex, HttpServletRequest request) {
+        log.warn("Insufficient stock detected for path: {} with message: {}", request.getRequestURI(), ex.getMessage(), ex);
         ErrorMessage error = new ErrorMessage(
                 HttpStatus.BAD_REQUEST.value(),
                 ex,
