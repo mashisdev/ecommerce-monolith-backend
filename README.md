@@ -1,3 +1,3 @@
 # 🛒 E-Commerce Backend API
 
-<img width="960" height="556" alt="image" src="https://github.com/user-attachments/assets/01489762-cfa6-4537-a013-96da5a5f4ab8" />
+<img width="900" height="556" alt="image" src="https://github.com/user-attachments/assets/6d79506b-af1e-4b7e-a39e-971bec35fb04" />
