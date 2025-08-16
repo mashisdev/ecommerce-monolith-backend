@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,8 +43,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     log.debug("Configuring HTTP request authorization rules.");
 
-                    auth.requestMatchers("/api/auth/**", "/api/categories/**", "/api/products/**").permitAll();
-                    log.debug("Permitted unauthenticated access to /api/auth, /api/categories and /api/products.");
+                    auth.requestMatchers(HttpMethod.GET, "/api/auth/**", "/api/categories/**", "/api/brands/**", "/api/products/**").permitAll();
+                    log.debug("Permitted unauthenticated access to GET /api/auth, /api/categories, /api/brands and /api/products.");
 
                     auth.anyRequest().authenticated();
                     log.debug("Required authentication for all other requests.");
