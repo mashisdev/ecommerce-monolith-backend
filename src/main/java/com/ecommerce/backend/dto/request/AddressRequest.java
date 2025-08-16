@@ -1,10 +1,10 @@
-package com.ecommerce.backend.dto.request.address;
+package com.ecommerce.backend.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UpdateAddressRequest(
+public record AddressRequest(
         @NotBlank(message = "Street cannot be blank")
         @Size(max = 100, message = "Street must not exceed 100 characters")
         String street,

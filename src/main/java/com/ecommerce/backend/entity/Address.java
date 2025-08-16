@@ -22,7 +22,7 @@ public class Address {
     private String zipCode;
     private String country;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 }

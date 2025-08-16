@@ -1,21 +1,22 @@
 package com.ecommerce.backend.mapper;
 
 import com.ecommerce.backend.dto.AddressDto;
-import com.ecommerce.backend.dto.request.address.CreateAddressRequest;
-import com.ecommerce.backend.dto.request.address.UpdateAddressRequest;
+import com.ecommerce.backend.dto.request.AddressRequest;
 import com.ecommerce.backend.entity.Address;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
+import org.mapstruct.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AddressMapper {
 
-    // Address <-> AddressDto
+    // Address -> AddressDto
     @Mapping(target = "userId", source = "user.id")
     AddressDto addressToAddressDto(Address address);
 
-    // Create & UpdateAddressRequest -> Address
-    Address toEntity(CreateAddressRequest request);
-    Address toEntity(UpdateAddressRequest request);
+    // AddressRequest -> Address
+    Address toEntity(AddressRequest request);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    void updateAddressFromRequest(AddressRequest request, @MappingTarget Address entity);
 }
