@@ -43,8 +43,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     log.debug("Configuring HTTP request authorization rules.");
 
-                    auth.requestMatchers(HttpMethod.GET, "/api/auth/**", "/api/categories/**", "/api/brands/**", "/api/products/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/categories/**", "/api/brands/**", "/api/products/**").permitAll();
                     log.debug("Permitted unauthenticated access to GET /api/auth, /api/categories, /api/brands and /api/products.");
+
+                    auth.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
+                    log.debug("Permitted unauthenticated access to POST /api/auth.");
 
                     auth.anyRequest().authenticated();
                     log.debug("Required authentication for all other requests.");
