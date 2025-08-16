@@ -1,7 +1,9 @@
 package com.ecommerce.backend.exception;
 
+import com.ecommerce.backend.exception.order.AddressRequiredException;
 import com.ecommerce.backend.exception.order.InvalidOrderStatusException;
 import com.ecommerce.backend.exception.product.InsufficientStockException;
+import com.ecommerce.backend.exception.product.ProductDisabledException;
 import com.ecommerce.backend.exception.resource.UnauthorizedActionException;
 import com.ecommerce.backend.exception.resource.ResourceAlreadyExistsException;
 import com.ecommerce.backend.exception.resource.ResourceNotFoundException;
@@ -196,6 +198,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    // Handles AddressRequiredException, returning 400 BAD REQUEST.
+    @ExceptionHandler(AddressRequiredException.class)
+    public ResponseEntity<ErrorMessage> handleAddressRequiredException(AddressRequiredException ex, HttpServletRequest request) {
+        log.warn("Address required: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+
     // Handles InsufficientStockException, returning 400 BAD REQUEST.
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<ErrorMessage> handleInsufficientStockException(InsufficientStockException ex, HttpServletRequest request) {
@@ -207,6 +223,19 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    // Handles ProductDisabledException, returning 409 CONFLICT.
+    @ExceptionHandler(ProductDisabledException.class)
+    public ResponseEntity<ErrorMessage> handleProductDisabledException(ProductDisabledException ex, HttpServletRequest request) {
+        log.warn("Product is disabled: {} for path: {}", ex.getMessage(), request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.CONFLICT.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     // Handles UnauthorizedActionException, returning 403 FORBIDDEN

@@ -8,8 +8,10 @@ import com.ecommerce.backend.entity.Product;
 import com.ecommerce.backend.entity.order.Order;
 import com.ecommerce.backend.entity.order.OrderStatus;
 import com.ecommerce.backend.entity.user.User;
+import com.ecommerce.backend.exception.order.AddressRequiredException;
 import com.ecommerce.backend.exception.product.InsufficientStockException;
 import com.ecommerce.backend.exception.order.InvalidOrderStatusException;
+import com.ecommerce.backend.exception.product.ProductDisabledException;
 import com.ecommerce.backend.exception.resource.ResourceNotFoundException;
 import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.mapper.OrderMapper;
@@ -50,6 +52,10 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new UserNotFoundException("User with id " + request.userId() + " not found."));
 
+        if (user.getAddress() == null) {
+            throw new AddressRequiredException("User with id " + request.userId() + " does not have an address. An address is required to create an order.");
+        }
+
         Order order = new Order();
         order.setUser(userMapper.userToUserEntity(user));
         order.setStatus(OrderStatus.PENDING);
@@ -62,6 +68,10 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItemRequest itemRequest : request.items()) {
             Product product = productRepository.findById(itemRequest.productId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product with id " + itemRequest.productId() + " not found."));
+
+            if (!product.isActive()) {
+                throw new ProductDisabledException("Product with id " + itemRequest.productId() + " is currently disabled and cannot be ordered.");
+            }
 
             if (product.getStock() < itemRequest.quantity()) {
                 throw new InsufficientStockException("Insufficient stock for product: " + product.getName());
