@@ -33,11 +33,11 @@ public class Product {
     @Column(name= "unit_price")
     private BigDecimal unitPrice;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
 

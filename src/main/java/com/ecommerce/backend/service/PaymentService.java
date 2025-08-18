@@ -46,8 +46,8 @@ public class PaymentService {
                 });
         log.info("Order found. Total price: {}", order.getTotalPrice());
 
-        if (!order.getUser().equals(user)) {
-            log.error("User {} attempted to access an order that does not belong to them. Order ID: {}", user.getEmail(), orderId);
+        if (!order.getUser().getEmail().equals(user.getEmail())) {
+            log.error("User {} attempted to access an order that does not belong to them. Order ID: {}", user, orderId);
             throw new UnauthorizedActionException("You are not authorized to perform this action on this order.");
         }
 

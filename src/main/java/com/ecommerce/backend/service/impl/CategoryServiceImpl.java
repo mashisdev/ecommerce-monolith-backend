@@ -26,6 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "CATEGORY_INFO", allEntries = true)
     public CategoryDto createCategory(String name) {
         Optional<Category> existingCategory = categoryRepository.findByName(name);
         if (existingCategory.isPresent()) {
@@ -48,8 +49,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Cacheable(value = "CATEGORY_INFO", unless = "#result==null")
     @Transactional(readOnly = true)
+    @Cacheable(value = "CATEGORY_INFO", unless = "#result==null")
     public Page<CategoryDto> getAllCategories(Pageable pageable) {
         Page<Category> categoryPage = categoryRepository.findAll(pageable);
         return categoryPage.map(categoryMapper::categoryToCategoryDto);
@@ -63,8 +64,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @CacheEvict(value = "CATEGORY_INFO", allEntries = true)
     @Transactional
+    @CacheEvict(value = "CATEGORY_INFO", allEntries = true)
     public CategoryDto updateCategory(Long categoryId, String name) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with ID '" + categoryId + "' not found."));
@@ -81,6 +82,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "CATEGORY_INFO", allEntries = true)
     public void deleteCategory(Long categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResourceNotFoundException("Category with ID '" + categoryId + "' not found.");

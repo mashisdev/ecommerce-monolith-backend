@@ -27,6 +27,6 @@ public class Brand {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "brand")
     private Set<Product> products;
 }

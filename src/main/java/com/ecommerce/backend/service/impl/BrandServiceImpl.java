@@ -26,6 +26,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "BRAND_INFO", allEntries = true)
     public BrandDto createBrand(String name) {
         log.info("Creating new brand with name: {}", name);
         brandRepository.findByName(name).ifPresent(b -> {
@@ -51,8 +52,8 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    @Cacheable(value = "BRAND_INFO", unless = "#result==null")
     @Transactional(readOnly = true)
+    @Cacheable(value = "BRAND_INFO", unless = "#result==null")
     public Page<BrandDto> getAllBrands(Pageable pageable) {
         log.info("Fetching all brands, page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         return brandRepository.findAll(pageable)
@@ -68,8 +69,8 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    @CacheEvict(value = "BRAND_INFO", allEntries = true)
     @Transactional
+    @CacheEvict(value = "BRAND_INFO", allEntries = true)
     public BrandDto updateBrand(Long brandId, String name) {
         log.info("Updating brand with ID: {} to new name: {}", brandId, name);
         Brand existingBrand = brandRepository.findById(brandId)
@@ -90,6 +91,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "BRAND_INFO", allEntries = true)
     public void deleteBrand(Long brandId) {
         log.info("Attempting to delete brand with ID: {}", brandId);
         if (!brandRepository.existsById(brandId)) {

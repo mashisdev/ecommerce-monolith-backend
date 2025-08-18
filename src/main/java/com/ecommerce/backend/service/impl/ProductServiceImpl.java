@@ -36,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "PRODUCT_INFO", allEntries = true)
     public ProductDto createProduct(CreateProductRequest request) {
         log.info("Creating a new product with name: {}", request.name());
 
@@ -70,8 +71,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = "PRODUCT_INFO", unless = "#result==null")
     @Transactional(readOnly = true)
+    @Cacheable(value = "PRODUCT_INFO", unless = "#result==null")
     public Page<ProductDto> searchProducts(String name, Boolean active, Long categoryId, Long brandId, Pageable pageable) {
         log.info("Searching products with criteria: name={}, active={}, categoryId={}, brandId={}", name, active, categoryId, brandId);
 
@@ -98,8 +99,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @CacheEvict(value = "PRODUCT_INFO", allEntries = true)
     @Transactional
+    @CacheEvict(value = "PRODUCT_INFO", allEntries = true)
     public ProductDto updateProduct(Long productId, UpdateProductRequest request) {
         log.info("Updating product with ID: {}", productId);
         Product existingProduct = productRepository.findById(productId)
@@ -127,6 +128,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "PRODUCT_INFO", allEntries = true)
+    public void updateProductStock(Long productId, int quantity) {
+        log.info("Updating stock for product with ID: {} by quantity: {}", productId, quantity);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + productId + " not found."));
+
+        product.setStock(quantity);
+        productRepository.save(product);
+        log.info("Stock for product with ID: {} updated successfully to: {}", productId, quantity);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = "PRODUCT_INFO", allEntries = true)
     public void deleteProduct(Long productId) {
         log.info("Attempting to delete product with ID: {}", productId);
         if (!productRepository.existsById(productId)) {

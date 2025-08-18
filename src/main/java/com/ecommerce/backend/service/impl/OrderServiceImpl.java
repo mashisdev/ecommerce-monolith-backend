@@ -1,10 +1,10 @@
 package com.ecommerce.backend.service.impl;
 
 import com.ecommerce.backend.dto.OrderDto;
+import com.ecommerce.backend.dto.ProductDto;
 import com.ecommerce.backend.dto.request.OrderItemRequest;
 import com.ecommerce.backend.dto.request.OrderRequest;
 import com.ecommerce.backend.entity.OrderItem;
-import com.ecommerce.backend.entity.Product;
 import com.ecommerce.backend.entity.order.Order;
 import com.ecommerce.backend.entity.order.OrderStatus;
 import com.ecommerce.backend.entity.user.User;
@@ -17,9 +17,9 @@ import com.ecommerce.backend.exception.user.UserNotFoundException;
 import com.ecommerce.backend.mapper.OrderMapper;
 import com.ecommerce.backend.mapper.UserMapper;
 import com.ecommerce.backend.repository.OrderRepository;
-import com.ecommerce.backend.repository.ProductRepository;
 import com.ecommerce.backend.repository.user.UserRepository;
 import com.ecommerce.backend.service.OrderService;
+import com.ecommerce.backend.service.ProductService;
 import com.ecommerce.backend.specifications.OrderSpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
     private final UserRepository userRepository;
     private final OrderMapper orderMapper;
     private final UserMapper userMapper;
@@ -66,23 +66,23 @@ public class OrderServiceImpl implements OrderService {
 
         Set<OrderItem> orderItems = new HashSet<>();
         for (OrderItemRequest itemRequest : request.items()) {
-            Product product = productRepository.findById(itemRequest.productId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product with id " + itemRequest.productId() + " not found."));
+            ProductDto productDto = productService.getProductById(itemRequest.productId());
 
-            if (!product.isActive()) {
+            if (!productDto.isActive()) {
                 throw new ProductDisabledException("Product with id " + itemRequest.productId() + " is currently disabled and cannot be ordered.");
             }
 
-            if (product.getStock() < itemRequest.quantity()) {
-                throw new InsufficientStockException("Insufficient stock for product: " + product.getName());
+            if (productDto.getStock() < itemRequest.quantity()) {
+                throw new InsufficientStockException("Insufficient stock for product: " + productDto.getName());
             }
-            product.setStock(product.getStock() - itemRequest.quantity());
+
+            productService.updateProductStock(productDto.getId(), productDto.getStock() - itemRequest.quantity());
 
             OrderItem orderItem = new OrderItem();
-            orderItem.setProductId(product.getId());
-            orderItem.setProductName(product.getName());
+            orderItem.setProductId(productDto.getId());
+            orderItem.setProductName(productDto.getName());
             orderItem.setQuantity(itemRequest.quantity());
-            orderItem.setUnitPrice(product.getUnitPrice());
+            orderItem.setUnitPrice(productDto.getUnitPrice());
 
             orderItem.setOrder(order);
             orderItems.add(orderItem);
@@ -149,9 +149,8 @@ public class OrderServiceImpl implements OrderService {
             if (status == OrderStatus.CANCELLED) {
                 log.info("Cancelling order {}. Returning stock to inventory.", orderId);
                 for (OrderItem item : order.getOrderItems()) {
-                    productRepository.findById(item.getProductId()).ifPresent(product -> {
-                        product.setStock(product.getStock() + item.getQuantity());
-                    });
+                    ProductDto productDto = productService.getProductById(item.getProductId());
+                    productService.updateProductStock(item.getProductId(), productDto.getStock() + item.getQuantity());
                 }
             }
 

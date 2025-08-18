@@ -15,5 +15,6 @@ public interface ProductService {
                                     Long categoryId, Long brandId,
                                     Pageable pageable);
     ProductDto updateProduct(Long productId, UpdateProductRequest request);
+    void updateProductStock(Long productId, int quantity);
     void deleteProduct(Long productId);
 }
