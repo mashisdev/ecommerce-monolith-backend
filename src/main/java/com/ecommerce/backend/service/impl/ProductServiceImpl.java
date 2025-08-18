@@ -97,6 +97,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = "PRODUCT_INFO", allEntries = true)
     @Transactional
     public ProductDto updateProduct(Long productId, UpdateProductRequest request) {
         log.info("Updating product with ID: {}", productId);

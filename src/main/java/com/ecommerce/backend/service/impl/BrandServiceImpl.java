@@ -9,6 +9,7 @@ import com.ecommerce.backend.repository.BrandRepository;
 import com.ecommerce.backend.service.BrandService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +60,15 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<BrandDto> searchBrandsByName(String name, Pageable pageable) {
+        log.info("Searching brands by name: '{}' with pagination: {}", name, pageable);
+        return brandRepository.findByNameContainingIgnoreCase(name, pageable)
+                .map(brandMapper::brandToBrandDto);
+    }
+
+    @Override
+    @CacheEvict(value = "BRAND_INFO", allEntries = true)
     @Transactional
     public BrandDto updateBrand(Long brandId, String name) {
         log.info("Updating brand with ID: {} to new name: {}", brandId, name);
@@ -76,14 +86,6 @@ public class BrandServiceImpl implements BrandService {
         Brand updatedBrand = brandRepository.save(existingBrand);
         log.info("Brand with ID: {} updated successfully.", updatedBrand.getId());
         return brandMapper.brandToBrandDto(updatedBrand);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<BrandDto> searchBrandsByName(String name, Pageable pageable) {
-        log.info("Searching brands by name: '{}' with pagination: {}", name, pageable);
-        return brandRepository.findByNameContainingIgnoreCase(name, pageable)
-                .map(brandMapper::brandToBrandDto);
     }
 
     @Override

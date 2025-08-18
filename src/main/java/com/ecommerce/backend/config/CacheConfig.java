@@ -1,6 +1,7 @@
 package com.ecommerce.backend.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@Slf4j
 @EnableCaching
 public class CacheConfig {
 
@@ -26,7 +28,10 @@ public class CacheConfig {
         return Caffeine.newBuilder()
                 .initialCapacity(100)
                 .maximumSize(500)
-                .expireAfterAccess(10, TimeUnit.MINUTES)
+                .expireAfterAccess(1, TimeUnit.MINUTES)
+                .removalListener((key, value, cause) -> {
+                    log.debug("Cache entry removed. Key={}, Cause={}", key, cause);
+                })
                 .recordStats();
     }
 }

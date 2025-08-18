@@ -8,6 +8,7 @@ import com.ecommerce.backend.mapper.CategoryMapper;
 import com.ecommerce.backend.repository.CategoryRepository;
 import com.ecommerce.backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,6 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = "CATEGORY_INFO", allEntries = true)
     @Transactional
     public CategoryDto updateCategory(Long categoryId, String name) {
         Category category = categoryRepository.findById(categoryId)
