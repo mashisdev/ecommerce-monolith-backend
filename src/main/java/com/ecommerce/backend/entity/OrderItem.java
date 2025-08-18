@@ -18,6 +18,12 @@ public class OrderItem {
     @Column(name="id")
     private Long id;
 
+    @Column(name = "product_id")
+    private Long productId;
+
+    @Column(name = "product_name")
+    private String productName;
+
     @Column(name="image_url")
     private String imageUrl;
 
@@ -26,10 +32,6 @@ public class OrderItem {
 
     @Column(name="quantity")
     private int quantity;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
 
     @ManyToOne
     @JoinColumn(name="order_id")

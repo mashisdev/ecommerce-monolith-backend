@@ -79,7 +79,8 @@ public class OrderServiceImpl implements OrderService {
             product.setStock(product.getStock() - itemRequest.quantity());
 
             OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(product);
+            orderItem.setProductId(product.getId());
+            orderItem.setProductName(product.getName());
             orderItem.setQuantity(itemRequest.quantity());
             orderItem.setUnitPrice(product.getUnitPrice());
 
@@ -148,8 +149,9 @@ public class OrderServiceImpl implements OrderService {
             if (status == OrderStatus.CANCELLED) {
                 log.info("Cancelling order {}. Returning stock to inventory.", orderId);
                 for (OrderItem item : order.getOrderItems()) {
-                    Product product = item.getProduct();
-                    product.setStock(product.getStock() + item.getQuantity());
+                    productRepository.findById(item.getProductId()).ifPresent(product -> {
+                        product.setStock(product.getStock() + item.getQuantity());
+                    });
                 }
             }
 

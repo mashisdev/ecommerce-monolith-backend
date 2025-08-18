@@ -6,11 +6,11 @@ import com.ecommerce.backend.dto.request.product.UpdateProductRequest;
 import com.ecommerce.backend.entity.Brand;
 import com.ecommerce.backend.entity.Category;
 import com.ecommerce.backend.entity.Product;
+import com.ecommerce.backend.entity.order.OrderStatus;
+import com.ecommerce.backend.exception.product.ProductAssociationException;
 import com.ecommerce.backend.exception.resource.ResourceNotFoundException;
 import com.ecommerce.backend.mapper.ProductMapper;
-import com.ecommerce.backend.repository.BrandRepository;
-import com.ecommerce.backend.repository.CategoryRepository;
-import com.ecommerce.backend.repository.ProductRepository;
+import com.ecommerce.backend.repository.*;
 import com.ecommerce.backend.service.ProductService;
 import com.ecommerce.backend.specifications.ProductSpecifications;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
     private final ProductMapper productMapper;
@@ -130,6 +131,9 @@ public class ProductServiceImpl implements ProductService {
         log.info("Attempting to delete product with ID: {}", productId);
         if (!productRepository.existsById(productId)) {
             throw new ResourceNotFoundException("Product not found with ID: " + productId);
+        }
+        if (orderItemRepository.existsByProductIdAndOrder_Status(productId, OrderStatus.PAID)) {
+            throw new ProductAssociationException("Cannot delete product because it is associated with 1 or more orders in PAID status. Consider deactivating the product instead.");
         }
         productRepository.deleteById(productId);
         log.info("Product with ID: {} deleted successfully.", productId);

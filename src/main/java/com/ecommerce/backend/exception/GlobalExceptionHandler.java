@@ -4,6 +4,7 @@ import com.ecommerce.backend.exception.order.AddressRequiredException;
 import com.ecommerce.backend.exception.order.InvalidOrderStatusException;
 import com.ecommerce.backend.exception.product.InsufficientStockException;
 import com.ecommerce.backend.exception.product.ProductDisabledException;
+import com.ecommerce.backend.exception.product.ProductAssociationException;
 import com.ecommerce.backend.exception.resource.UnauthorizedActionException;
 import com.ecommerce.backend.exception.resource.ResourceAlreadyExistsException;
 import com.ecommerce.backend.exception.resource.ResourceNotFoundException;
@@ -185,6 +186,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    // --- Orders Exception Handlers ---
+
     // Handles InvalidOrderStatusException, returning 400 BAD REQUEST.
     @ExceptionHandler(InvalidOrderStatusException.class)
     public ResponseEntity<ErrorMessage> handleInvalidOrderStatus(InvalidOrderStatusException ex, HttpServletRequest request) {
@@ -211,6 +214,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    // --- Products Exception Handlers ---
 
     // Handles InsufficientStockException, returning 400 BAD REQUEST.
     @ExceptionHandler(InsufficientStockException.class)
@@ -237,6 +241,20 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
+
+    // Handles ProductInUseException, returning 409 CONFLICT
+    @ExceptionHandler(ProductAssociationException.class)
+    public ResponseEntity<ErrorMessage> handleProductInUseException(ProductAssociationException ex, HttpServletRequest request) {
+        log.error("Conflict on path: {}", request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.CONFLICT.value(),
+                ex,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
 
     // Handles UnauthorizedActionException, returning 403 FORBIDDEN
     @ExceptionHandler(UnauthorizedActionException.class)
