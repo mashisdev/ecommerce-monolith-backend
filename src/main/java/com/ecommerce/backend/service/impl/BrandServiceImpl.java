@@ -9,6 +9,7 @@ import com.ecommerce.backend.repository.BrandRepository;
 import com.ecommerce.backend.service.BrandService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Cacheable(value = "BRAND_INFO", unless = "#result==null")
     @Transactional(readOnly = true)
     public Page<BrandDto> getAllBrands(Pageable pageable) {
         log.info("Fetching all brands, page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());

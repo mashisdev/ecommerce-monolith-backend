@@ -15,6 +15,8 @@ import com.ecommerce.backend.service.ProductService;
 import com.ecommerce.backend.specifications.ProductSpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -67,6 +69,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "PRODUCT_INFO", unless = "#result==null")
     @Transactional(readOnly = true)
     public Page<ProductDto> searchProducts(String name, Boolean active, Long categoryId, Long brandId, Pageable pageable) {
         log.info("Searching products with criteria: name={}, active={}, categoryId={}, brandId={}", name, active, categoryId, brandId);

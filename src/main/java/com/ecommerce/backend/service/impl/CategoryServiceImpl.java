@@ -8,6 +8,7 @@ import com.ecommerce.backend.mapper.CategoryMapper;
 import com.ecommerce.backend.repository.CategoryRepository;
 import com.ecommerce.backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable(value = "CATEGORY_INFO", unless = "#result==null")
     @Transactional(readOnly = true)
     public Page<CategoryDto> getAllCategories(Pageable pageable) {
         Page<Category> categoryPage = categoryRepository.findAll(pageable);
