@@ -1,3 +1,3 @@
 # 🛒 E-Commerce Backend API
 
-<img width="900" height="556" alt="image" src="https://github.com/user-attachments/assets/6d79506b-af1e-4b7e-a39e-971bec35fb04" />
+<img width="900" alt="entities relationship diagram" src="https://github.com/user-attachments/assets/592521b7-dbf4-41d1-9fb0-d7fc5bd12d4a" />
