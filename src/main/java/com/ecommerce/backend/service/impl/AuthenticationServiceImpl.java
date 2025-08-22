@@ -44,7 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserMapper userMapper;
 
     @Value("${FRONTEND_URL}")
-    private long FRONTEND_URL;
+    private String FRONTEND_URL;
 
     @Value("${RESET_TOKEN_EXPIRATION}")
     private long RESET_TOKEN_EXPIRATION;
