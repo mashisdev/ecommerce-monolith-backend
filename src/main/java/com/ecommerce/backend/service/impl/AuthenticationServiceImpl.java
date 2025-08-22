@@ -43,6 +43,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
 
+    @Value("${FRONTEND_URL}")
+    private long FRONTEND_URL;
+
     @Value("${RESET_TOKEN_EXPIRATION}")
     private long RESET_TOKEN_EXPIRATION;
 
@@ -288,7 +291,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private void sendPasswordResetEmail(String email, String token) {
         String subject = "Password Reset Request";
-        String resetUrl = "http://localhost:4200/reset-password?token=" + token; // Example of resetUrl for Angular frontend
+        String resetUrl = FRONTEND_URL + "/reset-password?token=" + token;
         String htmlMessage = "<html>"
                 + "<body style=\"font-family: Arial, sans-serif;\">"
                 + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
