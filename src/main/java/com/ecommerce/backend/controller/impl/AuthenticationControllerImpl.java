@@ -75,7 +75,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     @RateLimiter(name = "authRateLimiter")
     public ResponseEntity<Map<String, String>> redeemPassword(@RequestBody @Valid RedeemPasswordRequest request) {
         authenticationService.redeemPassword(request.email());
-        return ResponseEntity.ok().body(Map.of("message", "Send the redeem password link to your email"));
+        return ResponseEntity.ok().body(Map.of("message", "Password reset email has been sent."));
     }
 
     @PostMapping("/reset-password")
