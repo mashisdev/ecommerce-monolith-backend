@@ -49,7 +49,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
                     log.debug("Permitted unauthenticated access to POST /api/auth.");
 
-                    auth.anyRequest().hasAnyRole("USER", "ADMIN") ;
+                    auth.anyRequest().hasAnyAuthority("USER", "ADMIN");
                     log.debug("Required USER or ADMIN role for all other requests.");
                 })
                 .exceptionHandling(exception -> exception
