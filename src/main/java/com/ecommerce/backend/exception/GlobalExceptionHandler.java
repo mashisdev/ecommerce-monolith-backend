@@ -17,6 +17,7 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -255,7 +256,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-
     // Handles UnauthorizedActionException, returning 403 FORBIDDEN
     @ExceptionHandler(UnauthorizedActionException.class)
     public ResponseEntity<ErrorMessage> handleUnauthorizedAction(UnauthorizedActionException ex, HttpServletRequest request) {
@@ -418,6 +418,19 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(error);
+    }
+
+    // Handles MessagingException, returning 500 INTERNAL SERVER ERROR
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<ErrorMessage> handleMessagingException(MessagingException ex, HttpServletRequest request) {
+        log.error("Messaging error on path: {}", request.getRequestURI(), ex);
+        ErrorMessage error = new ErrorMessage(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ex,
+                "Error sending message: " + ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     // Catch-all handler for any unexpected exceptions, returning 500 INTERNAL SERVER ERROR
