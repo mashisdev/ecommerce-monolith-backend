@@ -14,7 +14,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -71,7 +70,7 @@ public class UserEntity implements UserDetails {
     @Column(name = "password_reset_token")
     private String passwordResetToken;
     @Column(name = "password_reset_token_expiration")
-    private Instant passwordResetTokenExpiration;
+    private LocalDateTime passwordResetTokenExpiration;
 
     // Auditing
     @CreatedDate

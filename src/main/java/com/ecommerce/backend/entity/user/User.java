@@ -5,7 +5,6 @@ import com.ecommerce.backend.entity.order.Order;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -25,7 +24,7 @@ public class User {
     private Integer verificationCode;
     private LocalDateTime verificationCodeExpiration;
     private String passwordResetToken;
-    private Instant passwordResetTokenExpiration;
+    private LocalDateTime passwordResetTokenExpiration;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
 }

@@ -25,7 +25,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -46,8 +45,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${FRONTEND_URL}")
     private String FRONTEND_URL;
 
-    @Value("${RESET_TOKEN_EXPIRATION}")
-    private long RESET_TOKEN_EXPIRATION;
+    @Value("${RESET_PASSWORD_TOKEN_EXPIRATION}")
+    private long RESET_PASSWORD_TOKEN_EXPIRATION;
+
+    @Value("${RESET_VERIFICATION_CODE_EXPIRATION}")
+    private long RESET_VERIFICATION_CODE_EXPIRATION;
 
     @Override
     public UserDto register(User user) {
@@ -150,7 +152,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.debug("Current verification code for user {} is expired or not set. Generating a new one.", user.getEmail());
 
         user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiration(LocalDateTime.now().plusMinutes(30));
+        user.setVerificationCodeExpiration(LocalDateTime.now().plusMinutes(RESET_VERIFICATION_CODE_EXPIRATION));
         log.debug("New verification code generated and set for user {}. It will expire at: {}", user.getEmail(), user.getVerificationCodeExpiration());
 
         log.debug("Attempting to send new verification email to user: {}", user.getEmail());
@@ -178,7 +180,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         var token = UUID.randomUUID().toString();
-        var expiration = Instant.now().plusSeconds(RESET_TOKEN_EXPIRATION);
+        var expiration = LocalDateTime.now().plusMinutes(RESET_PASSWORD_TOKEN_EXPIRATION);
 
         user.setPasswordResetToken(token);
         user.setPasswordResetTokenExpiration(expiration);
@@ -202,7 +204,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 });
         log.debug("User found with email {} for password reset. Checking token expiration.", user.getEmail());
 
-        if (user.getPasswordResetTokenExpiration() == null || user.getPasswordResetTokenExpiration().isBefore(Instant.now())) {
+        if (user.getPasswordResetTokenExpiration() == null || user.getPasswordResetTokenExpiration().isBefore(LocalDateTime.now())) {
             log.warn("Password reset failed for user {}: Reset token has expired or is null.", user.getEmail());
             throw new PasswordResetTokenExpiredException("Password reset token has expired.");
         }
